@@ -1,78 +1,81 @@
 /*
  * Iterator.cpp
  *
- *  Created on: Jul 17, 2018
+ *  Created on: Jul 18, 2018
  *      Author: samsor1
  */
-
-
-//Checking with errors
 #include<iostream>
 #include "Iterator.h"
 using namespace std;
+template<class T1,class T2>
+Iterator<T1,T2>::Iterator(const T1& a,const T2& b)
+{
+	//this->Node.key=a;
+	//this->Node.value=b;
 
-Iterator::Iterator() {
+}
+template<class T1,class T2>
+bool Iterator<T1,T2>::operator ++(const Iterator<T1, T2>& x, const Iterator<T1, T2>& y)
+{
+	//Linked list tarversal
+	//Iterator::Node current;
+	//Iterator Obj_It=*this;
+	//current=current.linked;
+	//current.link++;
+	return 0;
+
+}
+
+template<class T1,class T2>
+void Iterator<T1,T2>::m_begin()
+{
+	//node traversal from beginning (array list traversal)
+	Iterator::Node current;
+	int *p =current[0];
+	for(int i =0;i<sizeof(current)/sizeof(current[0]);i++)
+	 {
+		cout<<current[i];
+	 }
+
+
 
 
 }
 
-
-int Iterator::m_access(string inputKey,struct node *traverse)
+template<class T1,class T2>
+bool Iterator<T1,T2>::operator!=(const Iterator<T1, T2>& x,const Iterator<T1, T2>& y)
 {
-	 Iterator::node current;
+//	index=y.Node.hashValue%Max;
+	//for(int i =index;i<sizeof(lnode)/sizeof(lnode[0]);i++)
 
-
-	int index;
-	//index=hashmapfunction
-	int value =index%MAX;
-	while(current.next!=NULL)
+	if( x.lnode[index].key==y.Node.key && x.lnode[index].value==y.Node.value)
 	{
-			if(current.value==inputKey)
-			{
-				//element present
-				cout<<current.key<<endl;
-				cout<<current.value<<endl;
-
-			}
-			else
-			{
-				current->current.next;
-			}
-
+		for(int j=0;j<sizeof(anode)/sizeof(anode[0]);j++)
+		{
+		  if( x.key==y.Node.key && x.anode[j].value==y.Node.value)
+		  {
+			  break;
+		 }
+		  else
+		  {
+			  j++;
+		  }
 
 
+		}
 	}
-	return 0;
-
 }
 
-int Iterator::m_collisionCount(string inputKey,struct node *traverse)
+
+
+
+
+
+
+
+
+/*Iterator<T>::~Iterator()
 {
-	Iterator::node current;
-	//current =traverse;
-	int index;
-	int a[50];
-	//index=hashmapfunction
-	int value =index % MAX;
-	if (a[value]!= NULL)
-
-	{
-		collisionCount+1;
-		   while(current != NULL) {
-			   individualCount[value]++;
-			  current = current.next;
-		   }
-
-		   }
-
-	return 0;
-
-}
-
-
-
-
-Iterator::~Iterator() {
 	// TODO Auto-generated destructor stub
-}
+}*/
 
