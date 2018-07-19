@@ -4,6 +4,7 @@
  *  Created on: Jul 18, 2018
  *      Author: raviiv
  */
+//Checking for errors In Progress
 #include "hashmap.h"
 using namespace std;
 //#include<vector>
