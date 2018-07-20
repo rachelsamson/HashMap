@@ -4,47 +4,46 @@
  *  Created on: Jul 18, 2018
  *      Author: raviiv
  */
-//Checking for errors In Progress
+#define CAPACITY 26
 
 #ifndef HASHMAP_H_
 #define HASHMAP_H_
 #include<iostream>
-#include<vector>
+//#include<vector>
 using namespace std;
 //template for generic type
 template <typename K,typename V>
 class hashnode
 {
-public:
-	struct node
-	{
-		K Key;
-		V Value;
-		int *HEAD;
-		int *TAIl;
-		struct node *next;
+struct node
+{
+	K Key;
+	V Value;
+	struct node *next;
+}lnode[];//anode is ambiguous
 
-
-	}lnode;
+private:
+		node *head;
+		node *tail;
 public:
-	hashnode(K Key,V Value);
+	hashnode(K,V);
 	//constructor of class hashnode
 	//hashnode(K Key,V Value);
 	virtual ~hashnode(){}
 	void hashmap();
-
+	void insertNode(K,V);
 };
 template<typename K,typename V>
 class hashmap
 {
-	int capacity;
-	int size;
+//	int capacity;
+//	int size;
 public:
 	//vector<K,V> obj_v;
-	hashnode<K,V> **obj_arr;
+	//hashnode<K,V> **obj_arr;
 	hashmap();
 	virtual ~hashmap(){}
-	void insertNode(K Key ,V Value);
+
 
 };
 template <typename K,typename V>
