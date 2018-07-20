@@ -7,33 +7,38 @@
 
 #ifndef Iterator_H_
 #define Iterator_H_
-template <class T1,class T2>
+#define MAX 50
+template <class T1,class T2, class T3>
 class Iterator
 {
- private:
-	typedef struct Node
+ public:
+	 struct Node
 	{
 		typedef T1 Key;
 		typedef T2 Value;
 		int hashValue;
 		int *next;
-		//Node *end;
+		int *head;
+		int *tail;
+
 
 	};
-	Node anode[50],lnode[50];
-	struct Node *ptr = anode;
-	struct Node *prtl=lnode;
-	//typedef std::pair<const T1, T2> value_type;
+	Node lnode[MAX];
+	struct Node *prtl;
 
  public:
 	Iterator();
-	Iterator(const Iterator<T1,T2>&);
-	bool operator++(const Iterator<T1,T2>&);
-	bool operator!=(const Iterator<T1,T2>&);
-	// operator * ();
-		//int m_access(string,node);
-	Node m_begin();
-	Node m_end();
+	Iterator(T1,T2);
+	T3 m_begin();
+    T3  m_end();
+	unsigned int size();
+
+	T1 m_getKeys();
+	T2 m_get(T1 key);
+	T1 operator++(const T1);
+	bool operator!=(const T1);
+	struct Node operator*();
+
 	virtual ~Iterator(){}
 };
 
