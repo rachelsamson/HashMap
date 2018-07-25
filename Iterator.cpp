@@ -1,129 +1,197 @@
 /*
- * Iterator.cpp
+ * IteratorBST.cpp
  *
- *  Created on: Jul 18, 2018
+ *  Created on: Jul 23, 2018
  *      Author: samsor1
  */
-
-//checking for errors
 #include<iostream>
 #include "Iterator.h"
-using namespace std;
-template<class T1,class T2, class T3>
-Iterator<T1,T2,T3>::Iterator(){
-	cout<<"Empty constr.";
-}
 
-template<class T1,class T2, class T3>
-Iterator<T1,T2,T3>::Iterator(T1 Key,T2 Value)
-{
-	this->Node.Key=Key;
-	this->Node.Value=Value;
-	this->Node.next=NULL;
-	this->Node.head=lnode;
-	this->Node.tail=lnode;
-	this->prtl=NULL;
-}
+template<class T1,class T2>
+Iterator<T1,T2>::Iterator() {
 
-template<class T1,class T2, class T3>
-T3 Iterator<T1,T2,T3>::m_begin()
-{
-	 Node *data=lnode;
-	return data;
 }
 
 
-
-template<class T1,class T2, class T3>
-T3 Iterator<T1,T2,T3>::m_end()
+template<class T1,class T2>
+Iterator<T1,T2>::Iterator(T1 Key,T2 Value,Node* currentNode)
 {
-//	this->Node.head;
-	Node *p=this;
-	 while(p->next!=NULL)
+	temp=NULL;
+	current=currentNode;
+	index=0;
+
+}
+
+template<class T1,class T2>
+typename Iterator<T1,T2>::Node Iterator<T1,T2>::m_begin()
+{
+  for(int i=0;i<=MAX;i++)
+  {
+	if(lnode[i]!=NULL)
 	 {
-		 p=p->next;
+		 temp=lnode;
+		 while(temp->left!=NULL)
+		 {
+			 temp=temp->left;
+
+		 }
+		return temp;
+
 	 }
 
-	 return p;
-
-}
-template<class T1,class T2, class T3>
-struct Node Iterator<T1,T2,T3>::operator*()
-{
-	return this;
+  }
+  return temp;
 }
 
 
-
-template<class T1,class T2, class T3>
-T2 Iterator<T1,T2,T3>::m_get(T1 key)
+template<class T1,class T2>
+typename Iterator<T1,T2>::Node Iterator<T1,T2>::m_end()
 {
-	// int index=hashmap(key)
-	int index;
-	T2 it;
-	for(int i=0;i<=MAX;i++)
-	{
-		if(index==lnode[i].hashvalue)
+	for(int i=MAX;i>=0;i--)
+	  {
+		if(lnode[i]!=NULL)
+		 {
+			 temp=lnode[i];
+			 while(temp->right!=NULL)
+			 {
+				 temp=temp->right;
+
+			 }
+			return temp;
+
+		 }
+
+      }
+	return temp;
+}
+
+
+template<class T1,class T2>
+typename Iterator<T1,T2>::Node* Iterator<T1,T2>::operator*(struct Node * node)
+{
+ return current;
+}
+
+template<class T1,class T2>
+int Iterator<T1,T2>::size()
+{
+  return count;
+}
+
+
+template<class T1,class T2>
+T2& Iterator<T1,T2>::m_get(T1 key)
+{
+	//index=hashMap(T1 key);
+
+	temp=lnode[index];
+	Node temp2=NULL;
+	while((temp!=NULL) && (temp->Key!=key))
 		{
-			for(it=m_begin();it<=m_end();++it)
+		    temp2=temp;
+			while(temp->left!=NULL)
 			{
-				if(it.Key==key)
-				{
-					return it.Value;
-				}
-
+				temp2=temp;
+				temp=temp->left;//Search key before root node
 			}
+/*
+			{
+				temp=temp->right;//Search key after root node
+			}
+*/
 
-	   }
+		}
 
-
-	}
+			T2 returnKey=temp->Key;
+			return returnKey;
 }
 
-template<class T1,class T2, class T3>
-T1 Iterator<T1,T2,T3>::m_getKeys()
+template<class T1,class T2>
+T1* Iterator<T1,T2>::m_getKeys()
 {
-	T1 i;
-	T2 j;
-	for(i=lnode[0];i<=lnode[MAX];++i)
+	Node* temp;
+	int a=0;
+	for(int i=0;i<=size();++i)
 	{
-	   for(j=m_begin();j<=m_end();i++)
-		return this->Node.Value;
+		   Node root=lnode[i];
+
+	 inorder(root);
 
 	}
+
+		return KeyArray;
+
+}
+template<class T1,class T2>
+int* Iterator<T1,T2>::inorder(struct Node* node)
+	   {
+	      int i;
+
+		     if (node == NULL)
+		         return 0;
+
+		     /* first recur on left child */
+		     inorder(node->left);
+
+		     /* then print the data of node */
+		     KeyArray[i]= node->Key ;
+		     	 i++;
+		     /* now recur on right child */
+		     printInorder(node->right);
+		     return KeyArray;
+	       }
+
+
+template<class T1,class T2>
+T1 Iterator<T1,T2>::operator++(const T1 key)
+{
+	Iterator<T1,T2> it;
+
+		Node temp=current;
+		if(current->right!=NULL)
+	     {
+			current = current->right;
+		    while(current->left!=NULL)
+		    {
+		    	current=current->left;
+		    }
+
+          }
+
+	return current->Key;
+
 }
 
-
-
-template<class T1,class T2, class T3>
-T1 Iterator<T1,T2,T3>::operator ++(const T1 x)
+template<class T1,class T2>
+bool Iterator<T1,T2>::operator!=(Node node)
 {
 	T1 i;
-	 for ( i = m_begin().Key; i != m_end().Key; ++i)
-	        {
-		   return i;
-	        }
+	temp=lnode[index];
+	if(current->Key==node.Key && current->Value==node.Value)
+	{return true;}
 
-	return i;
+	return false;
 
 }
 
-
-
-
-template<class T1,class T2, class T3>
-bool Iterator<T1,T2,T3>::operator!=(const T1 x)
+template<class T1,class T2>
+bool Iterator<T1,T2>::operator!=(Node node1 ,Node node2)
 {
-	 T1 i;
-	 for (i = m_begin().Key; i != m_end().Key; ++i)
-	 {
-		            if (x.Key==i)
-		            {
-		                return true;
-		            }
-	 }
- return false;
+	T1 i;
+	temp=lnode[index];
+	if(node1.Key==node2.Key && node1.Value==node2.Value)
+	{return true;}
+
+	return false;
 
 }
-
+template<class T1,class T2>
+T2 Iterator<T1,T2>::operator[](int index)
+{
+  return lnode[index].Value;
+}
+template<class T1,class T2>
+Iterator<T1,T2>::~Iterator() {
+	// TODO Auto-generated destructor stub
+}
 
