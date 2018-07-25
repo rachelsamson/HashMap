@@ -85,24 +85,25 @@ T2& Iterator<T1,T2>::m_get(T1 key)
 	//index=hashMap(T1 key);
 
 	temp=lnode[index];
-	Node temp2=NULL;
-	while((temp!=NULL) && (temp->Key!=key))
+	//Node temp2=NULL;
+	Node temp2=search(temp,key);
+	/*while((temp!=NULL) && (temp->Key!=key))
 		{
 		    temp2=temp;
-			while(temp->left!=NULL)
+			if(temp->left!=NULL && temp->Key!=key)
 			{
 				temp2=temp;
 				temp=temp->left;//Search key before root node
 			}
-/*
+
 			{
 				temp=temp->right;//Search key after root node
 			}
-*/
 
-		}
 
-			T2 returnKey=temp->Key;
+		}*/
+
+			T2 returnKey=temp2->Value;
 			return returnKey;
 }
 
@@ -141,7 +142,6 @@ int* Iterator<T1,T2>::inorder(struct Node* node)
 		     return KeyArray;
 	       }
 
-
 template<class T1,class T2>
 T1 Iterator<T1,T2>::operator++(const T1 key)
 {
@@ -173,7 +173,22 @@ bool Iterator<T1,T2>::operator!=(Node node)
 	return false;
 
 }
+template<class T1,class T2>
+typename Iterator<T1,T2>::Node* Iterator<T1,T2>::search(struct Node * rootnode, int key)
+{	struct Node* root=rootnode;
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->Key== key)
+       return root;
 
+    // Key is greater than root's key
+    if (root->Key < key)
+       return search(root->right, key);
+
+    // Key is smaller than root's key
+    return search(root->left, key);
+}
+
+/*
 template<class T1,class T2>
 bool Iterator<T1,T2>::operator!=(Node node1 ,Node node2)
 {
@@ -184,7 +199,7 @@ bool Iterator<T1,T2>::operator!=(Node node1 ,Node node2)
 
 	return false;
 
-}
+}*/
 template<class T1,class T2>
 T2 Iterator<T1,T2>::operator[](int index)
 {

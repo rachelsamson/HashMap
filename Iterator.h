@@ -36,13 +36,15 @@ public:
 	 typename Iterator<T1,T2>::Node m_begin();
 	 typename Iterator<T1,T2>::Node m_end();
 	 int size();
+		typename Iterator<T1,T2>::Node* search(struct node * root, int key);
+
 	// int inorder(struct Node*);
 
 	T1* m_getKeys();
 	T2& m_get(T1 key);
 	T1 operator++(const T1 key);
-	bool operator!=(struct Node );
-	bool operator!=(struct Node node,struct Node node);
+	bool operator!=(struct Node node);
+	//bool operator!=(struct Node node,struct Node node);
 
 	typename Iterator<T1,T2>::Node* operator*(struct Node * node);
 	int* inorder(struct Node * node);
