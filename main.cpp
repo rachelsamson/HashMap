@@ -11,6 +11,7 @@ using namespace std;
 #include<string.h>
 #include<stdlib.h>
 #include "hashheader.h"
+#include "hashmap.cpp"
 int main(void) {
 	//Treenode<string,string,int> *newTreeNode;
 	//Treenode<string,string,int> newTreeNode2("t","q",6);
@@ -25,6 +26,7 @@ int main(void) {
 	//newTreeNode->value="a2b";
 	//newTreeNode->hashvalue=20;
 	obj.m_Insert(10,12);
+	obj.m_Insert(11,12);
 	//Inserting one node
 	/*Treenode<string,string,int> *newTreeNode;
 	newTreeNode->key=10;
