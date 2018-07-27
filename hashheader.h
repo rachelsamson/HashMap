@@ -56,7 +56,7 @@ public:
 	//struct hashnode<T1,T2> obj_Tree;
 	//------------------------------------------------->
 	hashmap<T1,T2>();
-	virtual ~hashmap<T1,T2>();
+	virtual ~hashmap<T1,T2>(){};
 	//bool IsEmpty(node *newNode);//yet to implement
 	int m_calculatehash(T1);
 	//------------------------------------------------->
