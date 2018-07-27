@@ -50,7 +50,8 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 	if(nodeptr[index].key==NULL)
 	{
 
-		nodeptr[index]=newNode;
+		nodeptr[index].key=newNode.key;
+		nodeptr[index].value=newNode.value;
 		//nodeptr[index]->key=key;
 		//nodeptr[index]->value=value;
 		nodeptr[index].left = NULL;
@@ -67,34 +68,39 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 		hashnode<T1,T2> *temp;
 		hashnode<T1,T2> *back;
 		temp=&nodeptr[index];
-		//back=NULL;
+		back=NULL;
+		//temp=&nodeptr[index];
 		cout<<temp<<endl;
 		cout<<&nodeptr[index];
 		cout<<"this is while";
-		while(temp!=NULL)
+		cout<<temp->key<<endl;
+		while(temp != NULL) // Loop till temp falls out of the tree
 		{
+		        back = temp;
+		        if(newNode.key < temp->key)
+		        {
+		            //temp->left=&newNode;
+		        	temp=temp->left;}
 
-			back=temp;
-			if(temp->key>newNode.key)
-			{
-				nodeptr[index].left=to_newNode;
-				//count++;
-				cout<<nodeptr[index].key;
-			}
-			else
-			{
-				nodeptr[index].right=to_newNode;
-				cout<<nodeptr[index].key;
-				//count++;
-			}
+		        else{
+		            temp=temp->right;
+		    }
 
+		    // Now attach the new node to the node that back points to
+		    //if(back == NULL)
+		    //{ // Attach as root node in a new tree
+		      //  nodeptr[index] = newNode;
+		    cout<<nodeptr[index].key;
 		}
+		if(back->key < newNode.key){
+			back->left=&newNode;}
+		else{
+			back->right=&newNode;}
+
+		   return true ;
 	}
-	return true ;
+	return 0;
 }
-
-
-
 /*struct node create_node(int val)
 {
 	struct node *temp;
@@ -174,3 +180,4 @@ bool hashnode<T1,T2,T3>::m_Insertarray(int index,Arraynode<T1,T2,T3> *newArrayNo
 
 		   return true;
 }*/
+
