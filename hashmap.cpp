@@ -39,19 +39,19 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 	//struct hashnode<T1,T2> newNode=new hashnode<T1,T2>;
 	//node->key=key;
 	//node->value=value;
-	//struct hashnode<T1,T2> node=(struct node*)malloc(sizeof(struct node));
-	struct hashnode<T1,T2> newNode;//=new hashnode<T1,T2>;
-	newNode.key=key;
-	newNode.value=value;
-	hashnode<T1,T2> *to_newNode;
-	to_newNode=&newNode;
+	struct hashnode<T1,T2> node=(struct node*)malloc(sizeof(struct node));
+	//struct hashnode<T1,T2> newNode;//=new hashnode<T1,T2>;
+	node.key=key;
+	node.value=value;
+	//hashnode<T1,T2> *to_newNode;
+	//to_newNode=&newNode;
 	//newNode=node;
 
 	if(nodeptr[index].key==NULL)
 	{
 
-		nodeptr[index].key=newNode.key;
-		nodeptr[index].value=newNode.value;
+		nodeptr[index].key=node.key;
+		nodeptr[index].value=node.value;
 		//nodeptr[index]->key=key;
 		//nodeptr[index]->value=value;
 		nodeptr[index].left = NULL;
@@ -70,17 +70,18 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 		temp=&nodeptr[index];
 		back=NULL;
 		//temp=&nodeptr[index];
-		cout<<temp<<endl;
-		cout<<&nodeptr[index];
-		cout<<"this is while";
-		cout<<temp->key<<endl;
+		//cout<<temp<<endl;
+		//cout<<&nodeptr[index];
+		//cout<<"this is while";
+		//cout<<temp->key<<endl;
 		while(temp != NULL) // Loop till temp falls out of the tree
 		{
 		        back = temp;
-		        if(newNode.key < temp->key)
+		        if(node.key < temp->key)
 		        {
 		            //temp->left=&newNode;
-		        	temp=temp->left;}
+		        	temp=temp->left;
+		        }
 
 		        else{
 		            temp=temp->right;
@@ -90,17 +91,31 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 		    //if(back == NULL)
 		    //{ // Attach as root node in a new tree
 		      //  nodeptr[index] = newNode;
-		    cout<<nodeptr[index].key;
+		    //cout<<nodeptr[index].key<<endl;
 		}
-		if(back->key < newNode.key){
-			back->left=&newNode;}
+		if(node.key < back->key ){
+			back->left=&node;
+		cout<<nodeptr[index].left<<endl;}
 		else{
-			back->right=&newNode;}
+			back->right=&node;
+			cout<<nodeptr[index].right;}
 
 		   return true ;
 	}
 	return 0;
 }
+/*template<typename T1,typename T2>
+bool hashmap<T1,T2>::m_findandInsert(T1 key,T2 value)
+{
+	struct hashnode<T1,T2> newNode;
+	struct hashnode<T1,T2> *temp;
+	temp=&nodeptr[0];
+	for(int index=0;index<CAPACITY;index++)
+	{
+		while()
+	}
+
+}*/
 /*struct node create_node(int val)
 {
 	struct node *temp;
@@ -128,7 +143,7 @@ void hashnode<T1,T2,T3>::m_Print_allTree(Treenode<T1,T2,T3> *T)
 	}
 }
 template<typename T1,typename T2,typename T3>
-void hashnode<T1,T2,T3>::m_PrintTree()
+void hashnode<T1,T2,T3>::m_Print;Tree()
 {
 	Print_all(root);
 }
