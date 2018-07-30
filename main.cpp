@@ -9,7 +9,6 @@
 #include <iostream>
 using namespace std;
 #include<string.h>
-#include<stdlib.h>
 #include "hashheader.h"
 #include "hashmap.cpp"
 int main(void) {
@@ -25,8 +24,13 @@ int main(void) {
 	//newTreeNode->key="vivek";
 	//newTreeNode->value="a2b";
 	//newTreeNode->hashvalue=20;
-	obj.m_Insert(10,12);
-	obj.m_Insert(11,12);
+	obj.m_Insert(9,12);
+	obj.m_Insert(2,12);
+	obj.m_Insert(11,22);
+	obj.m_findandInsert(11,22);
+	//obj.m_Insert(2,30);
+	//obj.m_Insert(13,35);
+	//obj.m_Insert(16,50);
 	//Inserting one node
 	/*Treenode<string,string,int> *newTreeNode;
 	newTreeNode->key=10;
