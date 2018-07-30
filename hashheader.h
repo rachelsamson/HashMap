@@ -1,6 +1,7 @@
 #ifndef HASHHEADER_H_
 #define HASHHEADER_H_
-const int CAPACITY=1000;
+const int CAPACITY=50;
+#include<stdint.h>
 template<typename T1,typename T2>
 struct hashnode
 		{
@@ -22,7 +23,15 @@ public:
 	bool m_findandInsert(T1,T2);
 	//------------------------------------------------->
 	bool m_Insert(T1 key,T2 value);
-		bool m_Delete(T1);
 	//------------------------------------------------->
+	bool m_Delete(T1);
+	//------------------------------------------------->
+	uint32_t size();// returns the total number of entries present in hash map
+	//------------------------------------------------->
+	uint32_t getNumberOfCollisionPerSlot(uint32_t);
+	//------------------------------------------------->
+	uint32_t getTotalNumberOfCollision();
+	//------------------------------------------------->
+	void printCollisionStatistics();
 };
 #endif /* HASHHEADER_H_ */
