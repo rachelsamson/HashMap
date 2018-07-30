@@ -10,7 +10,7 @@
 #include<stdlib.h>
 #include "jenkins.cpp"
 using namespace std;
-//int count;
+static int count[CAPACITY];
 template<typename T1,typename T2>
 hashmap<T1,T2>::hashmap()
 {
@@ -27,26 +27,23 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
     struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
     /*struct hashnode<T1,T2> node=(struct node*)malloc(sizeof(struct node));
 	struct hashnode<T1,T2> newNode=new hashnode<T1,T2>;
-	//node->key=key;
-	//node->value=value;
-
+	//node->key=key; //node->value=value;
 	//struct hashnode<T1,T2> newNode;//=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 	//struct hashnode<T1,T2> newNode;//=new hashnode<T1,T2>;
 	//node->key=key;
 	//node->value=value;*/
 	newNode->key=key;
 	newNode->value=value;
-hashnode<T1,T2> *to_newNode;
-	to_newNode=newNode;
-	//newNode=node;
+	hashnode<T1,T2> *to_newNode;
+	to_newNode=newNode;//newNode=node;
 	if(nodeptr[index].key==NULL)
 	{
 		nodeptr[index].key=newNode->key;
 		nodeptr[index].value=newNode->value;
 		nodeptr[index].left = NULL;
 		nodeptr[index].right = NULL;
-		//count++;
-		return true ;
+		count[index]++;
+		return true;
 	}
 	else
 	{
@@ -75,6 +72,7 @@ hashnode<T1,T2> *to_newNode;
 			newNode_1.key=newNode->key;
 			newNode_1.value=newNode->value;
 			back->left=&newNode_1;
+			count[index]++;
 		}
 		else
 		{
@@ -82,6 +80,7 @@ hashnode<T1,T2> *to_newNode;
 			newNode_1.key=newNode->key;
 			newNode_1.value=newNode->value;
 			back->right=&newNode_1;
+			count[index]++;
 		}
 		return true ;
 	}
@@ -96,7 +95,7 @@ bool hashmap<T1,T2>::m_findandInsert(T1 key,T2 value)
 	//struct hashnode<T1,T2> *temp;
 	//temp=&nodeptr[0];
 	int i=m_search(key);
-	cout<<i;
+	//cout<<i;
 	//for(int index=0;index<CAPACITY;index++)
 	//{
 
@@ -124,4 +123,43 @@ T2 hashmap<T1,T2>::m_search(T1 Key)
 	else
 		return temp->value;
 
+}
+//--------------------------------------------------------------->
+template<typename T1,typename T2>
+uint32_t hashmap<T1,T2>::size()
+{
+	int sum=0,i;
+	for(i=0;i<CAPACITY;i++)
+	{
+		sum+=count[i];
+	}
+	cout<<"Total entries on hashmap"<<sum;
+}
+//--------------------------------------------------------------->
+template<typename T1,typename T2>
+uint32_t hashmap<T1,T2>::getNumberOfCollisionPerSlot(uint32_t slotNumber)
+{
+	return --count[slotNumber];
+}
+//------------------------------------------------->
+template<typename T1,typename T2>
+uint32_t hashmap<T1,T2>::getTotalNumberOfCollision()
+{
+	int i;
+	uint32_t sum=0;
+	for(i=0;i<CAPACITY;i++)
+	{
+		sum+=count[i];
+	}
+	return sum-CAPACITY;
+}
+//------------------------------------------------->
+template<typename T1,typename T2>
+void hashmap<T1,T2>::printCollisionStatistics()
+{
+	int i;
+	for(i=0;i<CAPACITY;i++)
+	{
+		cout<<"number of collision at index at %u"<<i<<"are"<<--count[i]<<"\n";
+	}
 }
