@@ -1,37 +1,37 @@
-/*
- * main.cpp
- *
- *  Created on: Jul 22, 2018
- *      Author: raviiv
- */
 #include<stdint.h>
 #include<iostream>
 #include "hashheader.h"
 #include<stdlib.h>
+#include "bst.cpp"
 #include "jenkins.cpp"
 using namespace std;
 static int count[CAPACITY];
 template<typename T1,typename T2>
 hashmap<T1,T2>::hashmap()
 {
-
+	for(int i=0;i<50;i++){
+		nodeptr[i].key=NULL;
+		nodeptr[i].value=0;
+		nodeptr[i].right=NULL;
+		nodeptr[i].left=NULL;
+	}
 }
-template<typename T1,typename T2>
-bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
+template<class T1,class T2>
+int hashmap<T1,T2>::m_calculatehash(T1 key)
 {
 	const uint32_t stringVal[]={key};
 	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
-    uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
-    int index=(ABC/100000000)/2;
-    cout<<index;
-    struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
-    /*struct hashnode<T1,T2> node=(struct node*)malloc(sizeof(struct node));
-	struct hashnode<T1,T2> newNode=new hashnode<T1,T2>;
-	//node->key=key; //node->value=value;
-	//struct hashnode<T1,T2> newNode;//=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
-	//struct hashnode<T1,T2> newNode;//=new hashnode<T1,T2>;
-	//node->key=key;
-	//node->value=value;*/
+	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
+	int index=(ABC/100000000)/2;
+	return index%CAPACITY;
+
+}
+template<class T1,class T2>
+bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
+{
+	int index=m_calculatehash(key);
+	cout<<index<<endl;
+	struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 	newNode->key=key;
 	newNode->value=value;
 	hashnode<T1,T2> *to_newNode;
@@ -43,77 +43,56 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 		nodeptr[index].left = NULL;
 		nodeptr[index].right = NULL;
 		count[index]++;
+		cout<<nodeptr[index].key<<endl;
 		return true;
 	}
 	else
 	{
-		//struct hashnode<T1,T2> node=(struct node*)malloc(sizeof(struct node));
-		//node=newNode;
-		hashnode<T1,T2> *temp;
-		hashnode<T1,T2> *back;
-		temp=&nodeptr[index];
-		back=NULL;
-		while(temp != NULL) // Loop till temp falls out of the tree
-		{
-		        back = temp;
-		        if(newNode->key < temp->key)
-		        {
-		            //temp->left=&newNode;
-		        	temp=temp->left;
-		        }
-		        else
-		        {
-		            temp=temp->right;
-		        }
-		 }
-		if(newNode->key < back->key )
-		{
-			struct hashnode<T1,T2> newNode_1;
-			newNode_1.key=newNode->key;
-			newNode_1.value=newNode->value;
-			back->left=&newNode_1;
-			count[index]++;
-		}
-		else
-		{
-			struct hashnode<T1,T2> newNode_1;
-			newNode_1.key=newNode->key;
-			newNode_1.value=newNode->value;
-			back->right=&newNode_1;
-			count[index]++;
-		}
-		return true ;
+		hashnode<T1,T2> *root;
+		root=&nodeptr[index];
+		BST<T1,T2> b_obj;
+		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
 	}
 	return 0;
 }
+//--------------------------------------------------------------->
 template<typename T1,typename T2>
+bool hashmap<T1,T2>::m_Delete(T1 key)
+{
+	hashnode<T1,T2> *root;
+	root=&nodeptr[index];
+	if(root->key == )
+	BST<T1,T2> b_obj;
+	b_obj.m_bstdelete((bstnode<T1,T2>*)root,T1 key);
+
+}
+/*
+template<class T1,class T2>
 bool hashmap<T1,T2>::m_findandInsert(T1 key,T2 value)
 {
-	struct hashnode<T1,T2> newNode;
-	newNode.key=key;
-	newNode.value=value;
-	//struct hashnode<T1,T2> *temp;
-	//temp=&nodeptr[0];
-	int i=m_search(key);
-	//cout<<i;
-	//for(int index=0;index<CAPACITY;index++)
-	//{
+		struct hashnode<T1,T2> newNode;
+		newNode.key=key;
+		newNode.value=value;
+		//struct hashnode<T1,T2> *temp;
+		//temp=&nodeptr[0];
+		T2 i=m_search(key);
+		//cout<<i;
+		if
+		//for(int index=0;index<CAPACITY;index++)
+		//{
 
-	//}
-}
+		//}
+}*/
 template<typename T1,typename T2>
-T2 hashmap<T1,T2>::m_search(T1 Key)
+T2 hashmap<T1,T2>::m_search(T1 key)
 {
-	const uint32_t stringVal[]={Key};
-	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
-	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
-	int index=(ABC/100000000)/2;
+	int index=m_calculatehash(key);
 	struct hashnode<T1,T2> *temp=&nodeptr[index];
 	temp->left=nodeptr[index].left;
 	temp->right=nodeptr[index].right;
-	while((temp!=NULL) && (temp->key!=Key))
+	while((temp!=NULL) && (temp->key!=key))
 	{
-		if(Key < temp->key)
+		if(key < temp->key)
 			temp=temp->left;
 		else
 			temp=temp->right;
@@ -124,7 +103,8 @@ T2 hashmap<T1,T2>::m_search(T1 Key)
 		return temp->value;
 
 }
-//--------------------------------------------------------------->
+
+
 template<typename T1,typename T2>
 uint32_t hashmap<T1,T2>::size()
 {
@@ -136,13 +116,13 @@ uint32_t hashmap<T1,T2>::size()
 	cout<<"Total entries on hashmap"<<sum;
 }
 //--------------------------------------------------------------->
-template<typename T1,typename T2>
+template<class T1,class T2>
 uint32_t hashmap<T1,T2>::getNumberOfCollisionPerSlot(uint32_t slotNumber)
 {
 	return --count[slotNumber];
 }
 //------------------------------------------------->
-template<typename T1,typename T2>
+template<class T1,class T2>
 uint32_t hashmap<T1,T2>::getTotalNumberOfCollision()
 {
 	int i;
@@ -154,7 +134,7 @@ uint32_t hashmap<T1,T2>::getTotalNumberOfCollision()
 	return sum-CAPACITY;
 }
 //------------------------------------------------->
-template<typename T1,typename T2>
+template<class T1,class T2>
 void hashmap<T1,T2>::printCollisionStatistics()
 {
 	int i;
