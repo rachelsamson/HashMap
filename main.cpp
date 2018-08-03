@@ -13,13 +13,15 @@ using namespace std;
 #include "hashmap.cpp"
 int main(void) {
 	hashmap<int,int> obj;
-	obj.m_Insert(9,12);
-	obj.m_Insert(2,12);
-	obj.m_Insert(11,22);
-	obj.m_findandInsert(11,22);
-	obj.size();
-	obj.getNumberOfCollisionPerSlot(10);
-	obj.getTotalNumberOfCollision();
-	obj.printCollisionStatistics();
+	for(int i=20;i>0;i-=2)
+	{
+		obj.m_Insert(i,i*4);
+	}
+	obj.m_Delete(20);
+	//obj.m_findandInsert(11,22);
+	//obj.size();
+	//obj.getNumberOfCollisionPerSlot(10);
+	//obj.getTotalNumberOfCollision();
+	//obj.printCollisionStatistics();
 	return 0;
 }
