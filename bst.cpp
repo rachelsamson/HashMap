@@ -27,7 +27,7 @@ public:
 				tree->left = newnode;
 				(tree->left)->left = NULL;
 				(tree->left)->right = NULL;
-				cout<<"Node Added To Left"<<endl;
+				//cout<<"Node Added To Left"<<endl;
 				return;
 			}
 		}
@@ -42,7 +42,7 @@ public:
 				tree->right = newnode;
 				(tree->right)->left = NULL;
 				(tree->right)->right = NULL;
-				cout<<"Node Added To Right"<<endl;
+				//cout<<"Node Added To Right"<<endl;
 				return;
 			}
 		}

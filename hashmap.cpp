@@ -43,7 +43,7 @@ bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
 		nodeptr[index].left = NULL;
 		nodeptr[index].right = NULL;
 		count[index]++;
-		cout<<nodeptr[index].key<<endl;
+		//cout<<nodeptr[index].key<<endl;
 		return true;
 	}
 	else
@@ -62,13 +62,13 @@ bool hashmap<T1,T2>::m_Delete(T1 key)
 	int index=m_calculatehash(key);
 	hashmap<int,int> obj;
 	hashnode<T1,T2> *root=&nodeptr[index];
+	//hashnode<T1,T2> *temp;
 	if (root == NULL)
 	{ return false;}
 	BST b_obj;
-
 	if(1)
 	{
-		struct hashnode<T1,T2> *root=b_obj.m_deleteNode((struct bstnode<T1,T2>*)root,key);
+		b_obj.m_deleteNode((struct bstnode<T1,T2>*)root, key);
 	 return true;
 	}
 	 else{return false;}
@@ -110,8 +110,6 @@ T2 hashmap<T1,T2>::m_search(T1 key)
 		return temp->value;
 
 }
-
-
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::size()
 {
