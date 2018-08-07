@@ -1,15 +1,12 @@
-/*
- * IteratorBST.cpp
- *
- *  Created on: Jul 23, 2018
- *      Author: samsor1
- */
 #include<iostream>
+#include<list>
+#include<iterator>
+#include<algorithm>
 #include "Iterator.h"
 #include<stdlib.h>
+#include"bst.cpp"
 #include<stdint.h>
-//#include"hashmap.cpp"
-//#include"hashheader.h"
+#include "jenkins.cpp"
 #include "BSTIterators.h"
 #include"BSTIterators.cpp"
 using namespace std;
@@ -35,8 +32,6 @@ current=this->nodeptr;
 template<class T1,class T2>
 Iterator<T1,T2>::Iterator(hashnodeIt<T1,T2>* currentNode)
 {
-	struct hashnodeIt<T1,T2> *newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-
 	newNode=NULL;
 	current=currentNode;
 	int index=0;
@@ -46,8 +41,6 @@ Iterator<T1,T2>::Iterator(hashnodeIt<T1,T2>* currentNode)
 template<class T1,class T2>
 hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
 {
-	struct hashnodeIt<T1,T2> *newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-
 	int index=0;
 	newNode->key=nodeptr[index].key;
 	newNode->value=nodeptr[index].value;
@@ -58,6 +51,7 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
 		newNode=newNode->left;
 	}
 	cout<<newNode->key<<"this";
+	current=newNode;
 	return newNode;
 }
 
@@ -66,7 +60,6 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
 template<class T1,class T2>
 hashnodeIt<T1,T2>* Iterator<T1,T2>::end()
 {
-	struct hashnodeIt<T1,T2> *newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 	//int index=m_calculatehash();
 	for(int i=MAX-1;i>=0;i--)
 	{
@@ -80,14 +73,15 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::end()
 		 {newNode=newNode->right;}
 	 }
     }
+	current=newNode;
 	return newNode;
 }
 
 
 template<class T1,class T2>
-hashnodeIt<T1,T2>& Iterator<T1,T2>::operator*(struct hashnodeIt<T1,T2> current)
+hashnodeIt<T1,T2>* Iterator<T1,T2>::operator*(Iterator<T1,T2> node) const
 {
- return &current;
+ return current;
 }
 
 template<class T1,class T2>
@@ -100,63 +94,82 @@ int Iterator<T1,T2>::size()
 template<class T1,class T2>
 T2& Iterator<T1,T2>::m_get(T1 key)
 {
-	int index;//=hashMap(key);
-	struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-	struct hashnodeIt<T1,T2> *temp1=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	int index=m_calculatehash(key);
+	struct hashnodeIt<T1,T2> *temp=new hashnodeIt<int,int>;
 
 	temp=&nodeptr[index];
 	BSTIterators<T1,T2> bst;
 	struct hashnodeIt<T1,T2> temp2;
 	//temp1=
-	T2 returnKey=bst.search((bstNodeIt<T1,T2>*)temp,key);
-
+	 returnKey=bst.search((bstNodeIt<T1,T2>*)temp,key);
+current=temp;
 	return returnKey;
 }
 
 template<class T1,class T2>
-list<T1> Iterator<T1,T2>::m_getKeys()
+T1* Iterator<T1,T2>::m_getKeys()
 {
-	//BSTIterators<T1,T2> obj;
-	int size=10;
-	list<T1> a;
-	//T1 a[size];
+	struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+
+
 	BSTIterators<T1,T2> bst;
 
-	for(int i=0;i<=MAX;++i)
+	for(int i=0;i<=MAX-1;++i)
 	{
-		   struct hashnodeIt<T1,T2> *root=&nodeptr[i];
-		  a=bst.inorder((bstNodeIt<T1,T2>*) root);
+
+		temp=&nodeptr[i];
+		 if(temp->key!=NULL)
+		 bst.inorder((bstNodeIt<T1,T2>*)temp);
 
 	}
-
-		return a;
+	current=temp;
+	for(int i=0;i<MAX;i++)
+	{arr[i]=bst.KeyArray[i];}
+	free(temp);
+		return arr;
 
 }
 
 
 template<class T1,class T2>
-T1 Iterator<T1,T2>::operator++(const T1 key)
+T1 Iterator<T1,T2>::operator++()
 {	BSTIterators<T1,T2> obj;
+struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+
 int i =0;
-      struct hashnodeIt<T1,T2> *root=&nodeptr[i];
-	 list<T1> a=obj.inorder((bstNodeIt<T1,T2>*) root);
 
-	    std::list<int>::iterator findIter = std::find(a.begin(),a.end(),key);
-	    T1 value=std::advance(findIter,1);
-	    	T1 returnVal=*value;
+	T1 Key=current->key;
+	int index=m_calculatehash(Key);
+	if(arr[i]!='\0'){
+		while(Key!=arr[i]){i++;}
+		 returnKey=arr[i+1];}
+	else if(nodeptr[index].right!=NULL)
+	{
+		returnKey=(nodeptr[index].right)->key;
+	}
+	else {
+		index=index+1;
+		while(nodeptr[index].key=='\0'){index++;}
+		temp=&nodeptr[index];
+				 if(temp->key!='\0')
+				 obj.inorder((bstNodeIt<T1,T2>*)temp);
+				returnKey= obj.KeyArray[0];
+	}
 
-	    	return returnVal;
+	//free(temp);
+	return returnKey;
+
 }
 
 template<class T1,class T2>
-bool Iterator<T1,T2>::operator!=(struct hashnodeIt<T1,T2> node)
+bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node) const
 {
-	T1 i;
-	//temp=nodeptr[index];
-	if(current->Key==node.Key && current->Value==node.Value)
-	{return false;}
 
-	return true;
+
+	if(current->key==node.newNode->key && current->value==node.newNode->value)
+	{return true;}
+
+	return false;
 
 }
 
@@ -165,11 +178,61 @@ bool Iterator<T1,T2>::operator!=(struct hashnodeIt<T1,T2> node)
 template<class T1,class T2>
 T2 Iterator<T1,T2>::operator[](int index)
 {
-  return nodeptr[index].Value;
+	current=&nodeptr[index];
+  return nodeptr[index].value;
+}
+
+
+
+
+//--------------------------------------------------------------------------------------
+
+
+template<class T1,class T2>
+int Iterator<T1,T2>::m_calculatehash(T1 key)
+{
+	const uint32_t stringVal[]={key};
+	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
+	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
+	int index=(ABC/100000000)/2;
+	return index%MAX;
+
 }
 template<class T1,class T2>
+bool Iterator<T1,T2>::m_Insert(T1 key,T2 value)
+{
+	int index=m_calculatehash(key);
+	//cout<<index<<endl;
+	struct hashnodeIt<T1,T2> *newNode=new hashnodeIt<int,int>;
+	newNode->key=key;
+	newNode->value=value;
+	if(nodeptr[index].key=='\0')
+	{
+		nodeptr[index].key=newNode->key;
+		nodeptr[index].value=newNode->value;
+		nodeptr[index].left = NULL;
+		nodeptr[index].right = NULL;
+		//count[index]++;
+		//cout<<nodeptr[index].key<<endl;
+		return true;
+	}
+	else
+	{
+		hashnodeIt<T1,T2> *root;
+		root=&nodeptr[index];
+		BST<T1,T2> b_obj;
+		//b_obj.m_bstinsert()
+		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
+	}
+current=nodeptr;
+	return 0;
+}
+
+//----------------------------------------------------------------------------------
+
+template<class T1,class T2>
 Iterator<T1,T2>::~Iterator() {
-	// TODO Auto-generated destructor stub
+	free(newNode);
 }
 
 

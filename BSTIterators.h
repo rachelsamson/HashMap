@@ -7,26 +7,27 @@
 
 #ifndef BSTITERATORS_H_
 #define BSTITERATORS_H_
-#include <list>
-#include <iterator>
+
+#include<iostream>
+#define MAX 50
 using namespace std;
 template<class T1,class T2>
-
-struct bstnode
+struct bstNodeIt
 		{
 			T1 key;
 			T2 value;
-			bstnode<T1,T2> *left,*right;
+			bstNodeIt<T1,T2> *left,*right;
 		};
 template<class T1,class T2>
 class BSTIterators {
 public:
 	T1 TotalKeys[];
-	struct bstnode<T1,T2> Treenode;
+	int i=0;
+	T1 KeyArray[50]={'\0'};
+	struct bstNodeIt<T1,T2> tempTree;
 	BSTIterators();
-	//T1* Inorder(struct bstnode<T1,T2>* node);
-	list<T1> inorder(struct bstnode<T1,T2>* node);
-	T2 search(struct bstnode<T1,T2> * root, int key);
+	T1* inorder(bstNodeIt<T1,T2> *root);
+	T2 search(struct bstNodeIt<T1,T2> * root, int key);
 	virtual ~BSTIterators();
 };
 
