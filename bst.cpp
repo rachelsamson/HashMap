@@ -1,5 +1,6 @@
 #include<iostream>
 #include<stdlib.h>
+//static int count;
 using namespace std;
 template<typename T1,typename T2>
 struct bstnode
@@ -20,6 +21,7 @@ public:
 		{
 			if (tree->left != NULL)
 			{
+				//count++;
 				m_bstinsert(tree->left, newnode);
 			}
 			else
@@ -27,6 +29,7 @@ public:
 				tree->left = newnode;
 				(tree->left)->left = NULL;
 				(tree->left)->right = NULL;
+
 				//cout<<"Node Added To Left"<<endl;
 				return;
 			}
@@ -58,51 +61,75 @@ public:
 
 		return current;
 	}
-	template<class T1,class T2>
-	struct bstnode<T1,T2>* m_deleteNode(struct bstnode<T1,T2> *root, T1 key)
-	{
-		// base case
+template<class T1,class T2>
+struct bstnode<T1,T2>* m_deleteNode( bstnode<T1,T2> *root, T1 key)
+{
+    // base case
+    if (root == NULL) return root;
+
+    // If the key to be deleted is smaller than the root's key,
+    // then it lies in left subtree
+    if (key < root->key)
+
+        root->left = m_deleteNode(root->left, key);
+    	//printf("%x updated",temp);
+
+    // If the key to be deleted is greater than the root's key,
+    // then it lies in right subtree
+    else if (key > root->key)
+        root->right = m_deleteNode(root->right, key);
+
+    // if key is same as root's key, then This is the node
+    // to be deleted
+    else
+    {
+    	struct bstnode<T1,T2> *temp =new struct bstnode<T1,T2>;
+        // node with only one child or no child
+        if (root->left == NULL)
+        {
+
+            temp=root;
+            root=root->right;
+            temp=NULL;
+        }
+        else if (root->right == NULL)
+        {
+            temp=root;
+            root=root->left;
+            temp=NULL;
+        }
+        else
+        {
+
+        // node with two children: Get the inorder successor (smallest
+        // in the right subtree)
+        struct bstnode<T1,T2>* temp = minValueNode(root->right);
+
+        // Copy the inorder successor's content to this node
+        root->key = temp->key;
+
+        // Delete the inorder successor
+        root->right = m_deleteNode(root->right, temp->key);
+        }
+    }
+    return root;
+}
+template<class T1,class T2>
+T2 m_bstsearch(struct bstnode<T1,T2> *root,T1 key,T2 value)
+{
+		// Base Cases: root is null or key is present at root
+	    if (root == NULL)
+	    	return 0;
+	    else if(root->key==key)
+	    	return root->value;
+
+	    // Key is greater than root's key
+	    if (root->key < key)
+	       return m_bstsearch(root->right, key,value);
+
+	    // Key is smaller than root's key
+	    return m_bstsearch(root->left, key,value);
 
 
-		// If the key to be deleted is smaller than the root's key,
-		// then it lies in left subtree
-		if (key < root->key)
-			root->left = m_deleteNode(root->left, key);
-
-		// If the key to be deleted is greater than the root's key,
-		// then it lies in right subtree
-		else if (key > root->key)
-			root->right = m_deleteNode(root->right, key);
-
-		// if key is same as root's key, then This is the node
-		// to be deleted
-		else
-		{
-			// node with only one child or no child
-			if (root->left == NULL)
-			{
-				struct bstnode<T1,T2> *temp = root->right;
-				free(root);
-				return temp;
-			}
-			else if (root->right == NULL)
-			{
-				struct bstnode<T1,T2> *temp = root->left;
-				free(root);
-				return temp;
-			}
-
-			// node with two children: Get the inorder successor (smallest
-			// in the right subtree)
-			struct bstnode<T1,T2>* temp = minValueNode(root->right);
-
-			// Copy the inorder successor's content to this node
-			root->key = temp->key;
-
-			// Delete the inorder successor
-			root->right = m_deleteNode(root->right, temp->key);
-		}
-		return root;
-	}
-
+}
 };
