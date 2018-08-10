@@ -11,17 +11,24 @@ using namespace std;
 #include<string.h>
 #include "hashheader.h"
 #include "hashmap.cpp"
-int main(void) {
+#define FLAG_ 1
+int main(void)
+{
 	hashmap<int,int> obj;
-	for(int i=20;i>0;i-=2)
+	for(int i=2901;i>0;i-=1)
 	{
-		obj.m_Insert(i,i*4);
+		obj.insert(i,i*4);
+		if(FLAG_==0) cout<<i;
 	}
-	obj.m_Delete(20);
-	//obj.m_findandInsert(11,22);
-	//obj.size();
-	//obj.getNumberOfCollisionPerSlot(10);
-	//obj.getTotalNumberOfCollision();
-	//obj.printCollisionStatistics();
+//	obj.remove(2);
+	if(FLAG_==0)
+	{
+		cout<<"working fine";
+		obj.findandInsert(11,22);
+		cout<<"\n"<<obj.size();
+		cout<<'\n'<<obj.getNumberOfCollisionPerSlot(3);
+		cout<<"\n"<<obj.getTotalNumberOfCollision();
+		obj.printCollisionStatistics();
+	}
 	return 0;
 }

@@ -4,147 +4,148 @@
 #include<stdlib.h>
 #include "bst.cpp"
 #include "jenkins.cpp"
+#define FLAG 0
 using namespace std;
-static int count[MAX];
+static int count[MAX];//NO OF ENTRIES INTO HASHMAP
+static int count1[MAX];//UNIQUE ENTRIES IN HASHMAP
+static int count2[MAX];//COLLISION RELATED STATS
 template<class T1,class T2>
+//--------------------------------------------------------------->
+//CONSTRUCTOR INITIALIZING THE DATA STRUCTURE
 hashmap<T1,T2>::hashmap()
 {
-	for(int i=0;i<50;i++){
-		nodeptr[i].key=NULL;
-		nodeptr[i].value=0;
+	if(FLAG==0) cout<<"Constructor Initializing data structure to NULL\n";
+	for(int i=0;i<MAX;i++)
+	{
+		nodeptr[i].m_key='\0';
+		nodeptr[i].m_value=0;
 		nodeptr[i].right=NULL;
 		nodeptr[i].left=NULL;
 	}
 }
+//--------------------------------------------------------------->
+//CALCULATES HASH BASED ON JENKINS HASH
 template<class T1,class T2>
-int hashmap<T1,T2>::m_calculatehash(T1 key)
+int hashmap<T1,T2>::calculatehash(T1 m_key)
 {
-	const uint32_t stringVal[]={key};
+	const uint32_t stringVal[]={uint32_t(m_key)};
 	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
 	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
+	return (ABC%MAX);
+/*
 	int index=(ABC/100000000)/2;
-	return index%MAX;
-
+	return index%MAX;*/
 }
+//--------------------------------------------------------------->
+//INSERTION ON HASHMAP
 template<class T1,class T2>
-bool hashmap<T1,T2>::m_Insert(T1 key,T2 value)
+bool hashmap<T1,T2>::insert(T1 m_key,T2 m_value)
 {
-	int index=m_calculatehash(key);
-	cout<<index<<endl;
+
+	int m_index=calculatehash(m_key);
+	if(FLAG==0){ cout<<"Key:  "<<m_key;cout<<"\tValue:  "<<m_value;cout<<"\tIndex:"<<m_index;cout<<"\n";}
 	struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
-	newNode->key=key;
-	newNode->value=value;
-	hashnode<T1,T2> *to_newNode;
-	to_newNode=newNode;//newNode=node;
-	if(nodeptr[index].key==NULL)
+	newNode->m_key=m_key;
+	newNode->m_value=m_value;
+	if(nodeptr[m_index].m_key=='\0')
 	{
-		nodeptr[index].key=newNode->key;
-		nodeptr[index].value=newNode->value;
-		nodeptr[index].left = NULL;
-		nodeptr[index].right = NULL;
-		count[index]++;
-		//cout<<nodeptr[index].key<<endl;
+		nodeptr[m_index].m_key=newNode->m_key;
+		nodeptr[m_index].m_value=newNode->m_value;
+		nodeptr[m_index].left = NULL;
+		nodeptr[m_index].right = NULL;
+		count1[m_index]++;
 		return true;
 	}
 	else
 	{
 		hashnode<T1,T2> *root;
-		root=&nodeptr[index];
+		root=&nodeptr[m_index];
 		BST b_obj;
 		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
+		count2[m_index]++;
 	}
+	count[m_index]=count1[m_index]+count2[m_index];
+	if(FLAG==0){cout<<"\n"<<m_key;}
 	return 0;
 }
 //--------------------------------------------------------------->
+//DELETES AN ENTRY ON HASHMAP
 template<class T1,class T2>
-bool hashmap<T1,T2>::m_Delete(T1 key)
+bool hashmap<T1,T2>::remove(T1 m_key)
 {
-	int index=m_calculatehash(key);
-	hashmap<int,int> obj;
-	hashnode<T1,T2> *root=&nodeptr[index];
-	//hashnode<T1,T2> *temp;
-	if (root == NULL)
-	{ return false;}
-	BST b_obj;
+	int m_index=calculatehash(m_key);
+	//if(FLAG==0)cout<<m_index;
+	hashnode<T1,T2> *root=&nodeptr[m_index];
+	BST bst_obj;
 	if(1)
 	{
-		b_obj.m_deleteNode((struct bstnode<T1,T2>*)root, key);
-	 return true;
+		struct hashnode<T1,T2> *temp;
+		root=(struct hashnode<T1,T2>*)(bst_obj.m_deleteNode((bstnode<T1,T2>*)root,m_key));
+		temp=root;
+		nodeptr[m_index].m_key=temp->m_key;
+		nodeptr[m_index].m_value=temp->m_value;
+		nodeptr[m_index].left=temp->left;
+		nodeptr[m_index].right=temp->right;
+		return true;
 	}
-	 else{return false;}
-	}
-/*
-template<class T1,class T2>
-bool hashmap<T1,T2>::m_findandInsert(T1 key,T2 value)
-{
-		struct hashnode<T1,T2> newNode;
-		newNode.key=key;
-		newNode.value=value;
-		//struct hashnode<T1,T2> *temp;
-		//temp=&nodeptr[0];
-		T2 i=m_search(key);
-		//cout<<i;
-		if
-		//for(int index=0;index<MAX;index++)
-		//{
-
-		//}
-}*/
-template<class T1,class T2>
-T2 hashmap<T1,T2>::m_search(T1 key)
-{
-	int index=m_calculatehash(key);
-	struct hashnode<T1,T2> *temp=&nodeptr[index];
-	temp->left=nodeptr[index].left;
-	temp->right=nodeptr[index].right;
-	while((temp!=NULL) && (temp->key!=key))
-	{
-		if(key < temp->key)
-			temp=temp->left;
-		else
-			temp=temp->right;
-	}
-	if(temp==NULL)
-		return false;
-	else
-		return temp->value;
-
+	else{return false;}
 }
+//--------------------------------------------------------------->
+// SEARCHES FOR A m_key AND RETURNS A m_value
+// IF NOT INSERTS INTO THE HASHMAP
+template<class T1,class T2>
+bool hashmap<T1,T2>::findandInsert(T1 m_key,T2 m_value)
+{
+	int m_index=calculatehash(m_key);
+	struct hashnode<T1,T2> *root=&nodeptr[m_index];
+	BST bst_obj;
+	T2 i=bst_obj.m_bstsearch((struct bstnode<T1,T2>*)root,m_key,m_value);
+	if(i==0)
+	{
+		insert(m_key,m_value);
+
+	}
+	return true;
+}
+
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::size()
 {
-	int sum=0,i;
-	for(i=0;i<MAX;i++)
+	uint32_t sum=0;
+	for(int i=0;i<MAX;i++)
 	{
-		sum+=count[i];
+		sum+=uint32_t(count[i]);
 	}
-	cout<<"Total entries on hashmap"<<sum;
+	cout<<"Total entries on hashmap";
+	return sum;
 }
 //--------------------------------------------------------------->
+//RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED AT GIVEN SLOT NUMBER
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::getNumberOfCollisionPerSlot(uint32_t slotNumber)
 {
-	return --count[slotNumber];
+	return --count2[slotNumber];
 }
-//------------------------------------------------->
+//--------------------------------------------------------------->
+//RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED IN THE HASHMAP
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::getTotalNumberOfCollision()
 {
-	int i;
 	uint32_t sum=0;
-	for(i=0;i<MAX;i++)
+	for(int i=0;i<MAX;i++)
 	{
-		sum+=count[i];
+		sum+=count2[i];
 	}
-	return sum-MAX;
+	return sum;
 }
-//------------------------------------------------->
+//--------------------------------------------------------------->
+//PRINTS NUMBER OF COLLISIONS HAPPENED AT EVERY SLOT NUMBER
 template<class T1,class T2>
 void hashmap<T1,T2>::printCollisionStatistics()
 {
 	int i;
 	for(i=0;i<MAX;i++)
 	{
-		cout<<"number of collision at index at %u"<<i<<"are"<<--count[i]<<"\n";
+		cout<<"\nnumber of collision at index\t"<<i<<"\tare\t"<<count2[i];
 	}
 }
