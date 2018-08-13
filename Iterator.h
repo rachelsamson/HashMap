@@ -34,7 +34,6 @@ public:
 	//T1 returnKey;
 	struct hashnodeIt<T1,T2> nodeptr[MAX];
 	 struct hashnodeIt<T1,T2> *current;
-	 struct hashnodeIt<T1,T2> *_try;
 
 	 Iterator();
 	 Iterator(hashnodeIt<T1,T2>* Node);
@@ -44,9 +43,9 @@ public:
 	 T1* m_getKeys();
 	T2& m_get(T1 key);
 	T1 operator++() ;
-	bool operator!=( Iterator<T1,T2>) const;
+	bool operator!=( Iterator<T1,T2>) ;
 
-	 hashnodeIt<T1,T2>* operator*(Iterator<T1,T2> node) const;
+	 hashnodeIt<T1,T2>* operator*(Iterator<T1,T2> node) ;
 	T2 operator[](int index) ;
 	//----------------------------------------------------------------------------------------
 	    int m_calculatehash(T1 key);
@@ -57,12 +56,10 @@ public:
 	//--------------------------------------------------------------------------------------------
 	virtual ~Iterator();
 public:
-	  T1 arr[50]={NULL};
+	  T1 arr[MAX];
 	  T1 returnKey;
-	  list<T1> a;
-
 	  struct hashnodeIt<T1,T2> *newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 
-};
+	 };
 
 #endif /* ITERATORBST_H_ */

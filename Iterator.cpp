@@ -13,10 +13,14 @@ using namespace std;
 template<class T1,class T2>
 Iterator<T1,T2>::Iterator() {
 for(int i=0;i<MAX;i++){
-nodeptr[i].key=NULL;
-nodeptr[i].value=0;
-nodeptr[i].right=NULL;
-nodeptr[i].left=NULL;
+nodeptr[i].key='\0';
+nodeptr[i].value='\0';
+nodeptr[i].right='\0';
+nodeptr[i].left='\0';
+arr[i]=0;
+//newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 
 }
 /*ashmap<T1,T2> obj;
@@ -31,7 +35,9 @@ current=this->nodeptr;
 
 template<class T1,class T2>
 Iterator<T1,T2>::Iterator(hashnodeIt<T1,T2>* currentNode)
-{
+{	 //newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 	newNode=NULL;
 	current=currentNode;
 	int index=0;
@@ -40,7 +46,9 @@ Iterator<T1,T2>::Iterator(hashnodeIt<T1,T2>* currentNode)
 
 template<class T1,class T2>
 hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
-{
+{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 	int index=0;
 	newNode->key=nodeptr[index].key;
 	newNode->value=nodeptr[index].value;
@@ -50,7 +58,7 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
 	{
 		newNode=newNode->left;
 	}
-	cout<<newNode->key<<"this";
+	//cout<<newNode->key<<"this";
 	current=newNode;
 	return newNode;
 }
@@ -59,7 +67,9 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
 
 template<class T1,class T2>
 hashnodeIt<T1,T2>* Iterator<T1,T2>::end()
-{
+{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 	//int index=m_calculatehash();
 	for(int i=MAX-1;i>=0;i--)
 	{
@@ -79,7 +89,7 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::end()
 
 
 template<class T1,class T2>
-hashnodeIt<T1,T2>* Iterator<T1,T2>::operator*(Iterator<T1,T2> node) const
+hashnodeIt<T1,T2>* Iterator<T1,T2>::operator*(Iterator<T1,T2> node)
 {
  return current;
 }
@@ -93,9 +103,12 @@ int Iterator<T1,T2>::size()
 
 template<class T1,class T2>
 T2& Iterator<T1,T2>::m_get(T1 key)
-{
+{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 	int index=m_calculatehash(key);
-	struct hashnodeIt<T1,T2> *temp=new hashnodeIt<int,int>;
+	struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+
 
 	temp=&nodeptr[index];
 	BSTIterators<T1,T2> bst;
@@ -108,7 +121,9 @@ current=temp;
 
 template<class T1,class T2>
 T1* Iterator<T1,T2>::m_getKeys()
-{
+{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 	struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 
 
@@ -118,7 +133,7 @@ T1* Iterator<T1,T2>::m_getKeys()
 	{
 
 		temp=&nodeptr[i];
-		 if(temp->key!=NULL)
+		 if(temp->key!='\0')
 		 bst.inorder((bstNodeIt<T1,T2>*)temp);
 
 	}
@@ -126,6 +141,7 @@ T1* Iterator<T1,T2>::m_getKeys()
 	for(int i=0;i<MAX;i++)
 	{arr[i]=bst.KeyArray[i];}
 	free(temp);
+
 		return arr;
 
 }
@@ -134,6 +150,9 @@ T1* Iterator<T1,T2>::m_getKeys()
 template<class T1,class T2>
 T1 Iterator<T1,T2>::operator++()
 {	BSTIterators<T1,T2> obj;
+//newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
 struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 
 int i =0;
@@ -156,13 +175,13 @@ int i =0;
 				returnKey= obj.KeyArray[0];
 	}
 
-	//free(temp);
+	free(temp);
 	return returnKey;
 
 }
 
 template<class T1,class T2>
-bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node) const
+bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node)
 {
 
 
@@ -178,6 +197,8 @@ bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node) const
 template<class T1,class T2>
 T2 Iterator<T1,T2>::operator[](int index)
 {
+	//newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+
 	current=&nodeptr[index];
   return nodeptr[index].value;
 }
@@ -185,13 +206,13 @@ T2 Iterator<T1,T2>::operator[](int index)
 
 
 
-//--------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 
 template<class T1,class T2>
 int Iterator<T1,T2>::m_calculatehash(T1 key)
 {
-	const uint32_t stringVal[]={key};
+	const uint32_t stringVal[]={(uint32_t)key};
 	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
 	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
 	int index=(ABC/100000000)/2;
@@ -203,7 +224,7 @@ bool Iterator<T1,T2>::m_Insert(T1 key,T2 value)
 {
 	int index=m_calculatehash(key);
 	//cout<<index<<endl;
-	struct hashnodeIt<T1,T2> *newNode=new hashnodeIt<int,int>;
+	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
 	newNode->key=key;
 	newNode->value=value;
 	if(nodeptr[index].key=='\0')
@@ -224,6 +245,8 @@ bool Iterator<T1,T2>::m_Insert(T1 key,T2 value)
 		//b_obj.m_bstinsert()
 		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
 	}
+	cout<<nodeptr->key<<endl;
+	cout<<nodeptr->value<<endl;
 current=nodeptr;
 	return 0;
 }

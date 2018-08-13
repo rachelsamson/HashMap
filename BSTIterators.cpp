@@ -10,8 +10,9 @@
 
 template<class T1,class T2>
 BSTIterators<T1,T2>::BSTIterators() {
-	// TODO Auto-generated constructor stub
-
+	for(i=0;i<MAX;i++)
+	KeyArray[i]=0;
+	i=0;
 }
 
 
