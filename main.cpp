@@ -7,28 +7,41 @@
 //============================================================================
 
 #include <iostream>
+#include<conio.h>
 using namespace std;
 #include<string.h>
+//#include "Iterator.cpp"
+//#include "Iterator.h"
 #include "hashheader.h"
 #include "hashmap.cpp"
-#define FLAG_ 1
+#define FLAG_ 0
 int main(void)
 {
+	int counter=0;
 	hashmap<int,int> obj;
-	for(int i=2901;i>0;i-=1)
+	for(int i=0;i<2850;i+=1)
 	{
+
 		obj.insert(i,i*4);
-		if(FLAG_==0) cout<<i;
-	}
+		if(i==2800){cout<<"\t\t"<<i;}
+		//cout<<i;
+		//break;
+}
 //	obj.remove(2);
-	if(FLAG_==0)
-	{
-		cout<<"working fine";
-		obj.findandInsert(11,22);
-		cout<<"\n"<<obj.size();
-		cout<<'\n'<<obj.getNumberOfCollisionPerSlot(3);
-		cout<<"\n"<<obj.getTotalNumberOfCollision();
-		obj.printCollisionStatistics();
-	}
+
+//		cout<<"working fine";
+	//	obj.findandInsert(11,22);
+		//cout<<"\n"<<obj.size();
+		//cout<<'\n'<<obj.getNumberOfCollisionPerSlot(3);
+		//cout<<"\n"<<obj.getTotalNumberOfCollision();
+		//obj.printCollisionStatistics();
+		//obj.print_all();
+		//obj.m_getKeys();
+		//for(int j=0;j<MAX;j++)
+		//{
+			//cout<<obj.arr[j];
+		//}
+
+
 	return 0;
 }

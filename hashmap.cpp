@@ -4,6 +4,8 @@
 #include<stdlib.h>
 #include "bst.cpp"
 #include "jenkins.cpp"
+#include "BSTIterators.cpp"
+#include "BSTIterators.h"
 #define FLAG 0
 using namespace std;
 static int count[MAX];//NO OF ENTRIES INTO HASHMAP
@@ -14,13 +16,16 @@ template<class T1,class T2>
 //CONSTRUCTOR INITIALIZING THE DATA STRUCTURE
 hashmap<T1,T2>::hashmap()
 {
-	if(FLAG==0) cout<<"Constructor Initializing data structure to NULL\n";
+	if(FLAG==0) cout<<"Constructor Initializing data structure to NULL\n"<<endl;
 	for(int i=0;i<MAX;i++)
 	{
 		nodeptr[i].m_key='\0';
 		nodeptr[i].m_value=0;
 		nodeptr[i].right=NULL;
 		nodeptr[i].left=NULL;
+		arr[i]=0;//for iterator
+		//current=this->nodeptr[i];
+
 	}
 }
 //--------------------------------------------------------------->
@@ -43,10 +48,12 @@ bool hashmap<T1,T2>::insert(T1 m_key,T2 m_value)
 {
 
 	int m_index=calculatehash(m_key);
-	if(FLAG==0){ cout<<"Key:  "<<m_key;cout<<"\tValue:  "<<m_value;cout<<"\tIndex:"<<m_index;cout<<"\n";}
-	struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+	//struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+	struct hashnode<T1,T2> *newNode=new struct hashnode<T1,T2>;
 	newNode->m_key=m_key;
 	newNode->m_value=m_value;
+	newNode->left=NULL;
+	newNode->right=NULL;
 	if(nodeptr[m_index].m_key=='\0')
 	{
 		nodeptr[m_index].m_key=newNode->m_key;
@@ -54,6 +61,10 @@ bool hashmap<T1,T2>::insert(T1 m_key,T2 m_value)
 		nodeptr[m_index].left = NULL;
 		nodeptr[m_index].right = NULL;
 		count1[m_index]++;
+		//newNode=NULL;
+		int a=nodeptr[m_index].m_key;
+		//free(newNode);
+		if(FLAG==0){ cout<<"Key:  "<<m_key<<"\tValue:  "<<m_value<<"\tIndex:"<<m_index<<"\n";}
 		return true;
 	}
 	else
@@ -63,9 +74,12 @@ bool hashmap<T1,T2>::insert(T1 m_key,T2 m_value)
 		BST b_obj;
 		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
 		count2[m_index]++;
+		root=NULL;
+		delete newNode;
+		if(FLAG==0){ cout<<"Key:  "<<m_key<<"\tValue:  "<<m_value<<"\tIndex:"<<m_index<<"\n";}
 	}
 	count[m_index]=count1[m_index]+count2[m_index];
-	if(FLAG==0){cout<<"\n"<<m_key;}
+	//if(FLAG==0){cout<<"\n"<<m_key;}
 	return 0;
 }
 //--------------------------------------------------------------->
@@ -148,4 +162,39 @@ void hashmap<T1,T2>::printCollisionStatistics()
 	{
 		cout<<"\nnumber of collision at index\t"<<i<<"\tare\t"<<count2[i];
 	}
+}
+template<class T1,class T2>
+void hashmap<T1,T2>::print_all()
+{
+	for(int i=0;i<MAX;i++)
+	{
+		cout<<"\n"<< nodeptr[i].m_key;
+	}
+}
+template<class T1,class T2>
+T1* hashmap<T1,T2>::m_getKeys()
+{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+
+	struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+
+
+	BSTIterators<T1,T2> bst;
+
+	for(int i=0;i<=MAX-1;++i)
+	{
+
+		temp=&nodeptr[i];
+		if(temp->m_key!='\0')
+			bst.inorder((bstNodeIt<T1,T2>*)temp);
+
+	}
+	current=temp;
+	uint32_t a=size();
+	for(int i=0;i<a;i++)
+	{arr[i]=bst.KeyArray[i];}
+	free(temp);
+
+	return arr;
+
 }
