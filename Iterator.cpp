@@ -1,40 +1,215 @@
 #include<iostream>
-#include<list>
-#include<iterator>
-#include<algorithm>
 #include "Iterator.h"
 #include<stdlib.h>
-#include"bst.cpp"
 #include<stdint.h>
+#include "bst.cpp"
 #include "jenkins.cpp"
+
+//#include "jenkins.cpp"
 #include "BSTIterators.h"
 #include"BSTIterators.cpp"
+#define FLAG 1
+static int count[MAX];//NO OF ENTRIES INTO HASHMAP
+static int count1[MAX];//UNIQUE ENTRIES IN HASHMAP
+static int count2[MAX];//COLLISION RELATED STATS
 using namespace std;
+
+//---------------------------------------------------------------------------------
+
+
+//CONSTRUCTOR INITIALIZING THE DATA STRUCTURE
+template<class T1,class T2>
+hashmap<T1,T2>::hashmap()
+{
+	if(FLAG==0) cout<<"Constructor Initializing data structure to NULL\n"<<endl;
+	for(int i=0;i<MAX;i++)
+	{
+		/*nodeptr[i].m_key='\0';
+		nodeptr[i].m_value=0;
+		nodeptr[i].right=NULL;
+		nodeptr[i].left=NULL;
+		*/arr[i]=0;//for iterator
+		//current=this->nodeptr[i];
+
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//CALCULATES HASH BASED ON JENKINS HASH
+template<class T1,class T2>
+int hashmap<T1,T2>::calculatehash(T1 m_key)
+{
+	const uint32_t stringVal[]={uint32_t(m_key)};
+	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
+	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
+	return (ABC%MAX);
+/*
+	int index=(ABC/100000000)/2;
+	return index%MAX;*/
+}
+//--------------------------------------------------------------->
+//INSERTION ON HASHMAP
+template<class T1,class T2>
+bool hashmap<T1,T2>::insert(T1 m_key,T2 m_value)
+{
+
+	int m_index=calculatehash(m_key);
+	if(FLAG==0){ cout<<"Key:  "<<m_key;cout<<"\tValue:  "<<m_value;cout<<"\tIndex:"<<m_index;cout<<"\n";}
+	struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+	newNode->m_key=m_key;
+	newNode->m_value=m_value;
+	if(nodeptr[m_index].m_key=='\0')
+	{
+		nodeptr[m_index].m_key=6;
+		nodeptr[m_index].m_key=newNode->m_key;
+		nodeptr[m_index].m_value=newNode->m_value;
+		nodeptr[m_index].left = NULL;
+		nodeptr[m_index].right = NULL;
+		count1[m_index]++;
+		return true;
+	}
+	else
+	{
+		hashnode<T1,T2> *root;
+		root=&nodeptr[m_index];
+		BST<T1,T2> b_obj;
+		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
+		count2[m_index]++;
+	}
+	count[m_index]=count1[m_index]+count2[m_index];
+	if(FLAG==0){cout<<"\n"<<m_key;}
+	return 0;
+}
+//--------------------------------------------------------------->
+//DELETES AN ENTRY ON HASHMAP
+template<class T1,class T2>
+bool hashmap<T1,T2>::remove(T1 m_key)
+{
+	int m_index=calculatehash(m_key);
+	//if(FLAG==0)cout<<m_index;
+	hashnode<T1,T2> *root=&nodeptr[m_index];
+	BST<T1,T2> bst_obj;
+	if(1)
+	{
+		struct hashnode<T1,T2> *temp;
+		root=(struct hashnode<T1,T2>*)(bst_obj.m_deleteNode((bstnode<T1,T2>*)root,m_key));
+		temp=root;
+		nodeptr[m_index].m_key=temp->m_key;
+		nodeptr[m_index].m_value=temp->m_value;
+		nodeptr[m_index].left=temp->left;
+		nodeptr[m_index].right=temp->right;
+		return true;
+	}
+	else{return false;}
+}
+//--------------------------------------------------------------->
+// SEARCHES FOR A m_key AND RETURNS A m_value
+// IF NOT INSERTS INTO THE HASHMAP
+template<class T1,class T2>
+bool hashmap<T1,T2>::findandInsert(T1 m_key,T2 m_value)
+{
+	int m_index=calculatehash(m_key);
+	struct hashnode<T1,T2> *root=&nodeptr[m_index];
+	BST<T1,T2> bst_obj;
+	T2 i=bst_obj.m_bstsearch((struct bstnode<T1,T2>*)root,m_key,m_value);
+	if(i==0)
+	{
+		insert(m_key,m_value);
+
+	}
+	return true;
+}
+
+template<class T1,class T2>
+uint32_t hashmap<T1,T2>::size()
+{
+	uint32_t sum=0;
+	for(int i=0;i<MAX;i++)
+	{
+		sum+=uint32_t(count[i]);
+	}
+	cout<<"Total entries on hashmap";
+	return sum;
+}
+//--------------------------------------------------------------->
+//RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED AT GIVEN SLOT NUMBER
+template<class T1,class T2>
+uint32_t hashmap<T1,T2>::getNumberOfCollisionPerSlot(uint32_t slotNumber)
+{
+	return --count2[slotNumber];
+}
+//--------------------------------------------------------------->
+//RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED IN THE HASHMAP
+template<class T1,class T2>
+uint32_t hashmap<T1,T2>::getTotalNumberOfCollision()
+{
+	uint32_t sum=0;
+	for(int i=0;i<MAX;i++)
+	{
+		sum+=count2[i];
+	}
+	return sum;
+}
+//--------------------------------------------------------------->
+//PRINTS NUMBER OF COLLISIONS HAPPENED AT EVERY SLOT NUMBER
+template<class T1,class T2>
+void hashmap<T1,T2>::printCollisionStatistics()
+{
+	int i;
+	for(i=0;i<MAX;i++)
+	{
+		cout<<"\nnumber of collision at index\t"<<i<<"\tare\t"<<count2[i];
+	}
+}
+
+//----------------------------------------------------------------------------------
+
+
+
+
 template<class T1,class T2>
 Iterator<T1,T2>::Iterator() {
-for(int i=0;i<MAX;i++){
-nodeptr[i].key='\0';
-nodeptr[i].value='\0';
-nodeptr[i].right='\0';
-nodeptr[i].left='\0';
+	int i=0;
+
+	//this->nodeptr=t1.getHashNode();
+//nodeptr=getHashNode();
 arr[i]=0;
-//newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+//newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+//struct hashnodeIt<T1,T2> *newNode=new struct hashnode<T1,T2>;
+
+for(int i=0;i<MAX;i++)
+	{
+		hashmap<T1,T2>::nodeptr[i].m_key='\0';
+		hashmap<T1,T2>::nodeptr[i].m_value=0;
+		hashmap<T1,T2>::nodeptr[i].right=NULL;
+		hashmap<T1,T2>::nodeptr[i].left=NULL;
+	}
 
 
-}
+
 /*ashmap<T1,T2> obj;
 	obj.nodeptr[0];
 	cout<<"this is";
-cout<<obj.nodeptr[0].key;*/
+cout<<obj.nodeptr[0].m_key;*/
 current=this->nodeptr;
-
 
 }
 
 
 template<class T1,class T2>
-Iterator<T1,T2>::Iterator(hashnodeIt<T1,T2>* currentNode)
+Iterator<T1,T2>::Iterator(hashnode<T1,T2>* currentNode)
 {	 //newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 //struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
 
@@ -45,20 +220,21 @@ Iterator<T1,T2>::Iterator(hashnodeIt<T1,T2>* currentNode)
 }
 
 template<class T1,class T2>
-hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
+hashnode<T1,T2>* Iterator<T1,T2>::begin()
 {	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
 
 	int index=0;
-	newNode->key=nodeptr[index].key;
-	newNode->value=nodeptr[index].value;
-	newNode->right=nodeptr[index].right;
-	newNode->left=nodeptr[index].left;
+	while(hashmap<T1,T2>::nodeptr[index].m_key=='\0'){index++;}
+	newNode->m_key=hashmap<T1,T2>::nodeptr[index].m_key;
+	newNode->m_value=hashmap<T1,T2>::nodeptr[index].m_value;
+	newNode->right=hashmap<T1,T2>::nodeptr[index].right;
+	newNode->left=hashmap<T1,T2>::nodeptr[index].left;
 	while(newNode->left!=NULL)
 	{
 		newNode=newNode->left;
 	}
-	//cout<<newNode->key<<"this";
+	//cout<<newNode->m_key<<"this";
 	current=newNode;
 	return newNode;
 }
@@ -66,19 +242,19 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::begin()
 
 
 template<class T1,class T2>
-hashnodeIt<T1,T2>* Iterator<T1,T2>::end()
-{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+hashnode<T1,T2>* Iterator<T1,T2>::end()
+{	// newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnode<T1,T2> *newNode=new struct hashnode<T1,T2>;
 
 	//int index=m_calculatehash();
 	for(int i=MAX-1;i>=0;i--)
 	{
-	 if(nodeptr[i].key != NULL)
+	 if(hashmap<T1,T2>::nodeptr[i].m_key != NULL)
 	 {
-  	   newNode->key=nodeptr[i].key;
-       newNode->value=nodeptr[i].value;
-       newNode->right=nodeptr[i].right;
-       newNode->left=nodeptr[i].left;
+  	   newNode->m_key=hashmap<T1,T2>::nodeptr[i].m_key;
+       newNode->m_value=hashmap<T1,T2>::nodeptr[i].m_value;
+       newNode->right=hashmap<T1,T2>::nodeptr[i].right;
+       newNode->left=hashmap<T1,T2>::nodeptr[i].left;
 		while(newNode->right!=NULL)
 		 {newNode=newNode->right;}
 	 }
@@ -89,42 +265,38 @@ hashnodeIt<T1,T2>* Iterator<T1,T2>::end()
 
 
 template<class T1,class T2>
-hashnodeIt<T1,T2>* Iterator<T1,T2>::operator*(Iterator<T1,T2> node)
+hashnode<T1,T2>* Iterator<T1,T2>::operator*()
 {
  return current;
 }
 
-template<class T1,class T2>
-int Iterator<T1,T2>::size()
-{int count=0;
-  return count;
-}
 
 
 template<class T1,class T2>
-T2& Iterator<T1,T2>::m_get(T1 key)
-{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+T2& Iterator<T1,T2>::get(T1 m_key)
+{	// newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	//struct hashnode<T1,T2> *newNode=new struct hashnode<T1,T2>;
+	Iterator<T1,T2> it_obj;
 
-	int index=m_calculatehash(key);
-	struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	int index=it_obj.calculatehash(m_key);
+	struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 
 
-	temp=&nodeptr[index];
+	temp=&(hashmap<T1,T2>::nodeptr[index]);
 	BSTIterators<T1,T2> bst;
-	struct hashnodeIt<T1,T2> temp2;
+	struct hashnode<T1,T2> temp2;
 	//temp1=
-	 returnKey=bst.search((bstNodeIt<T1,T2>*)temp,key);
-current=temp;
+	 returnKey=bst.search((bstNodeIt<T1,T2>*)temp,m_key);
+	 current=temp;
 	return returnKey;
 }
 
 template<class T1,class T2>
-T1* Iterator<T1,T2>::m_getKeys()
-{	// newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+T1* Iterator<T1,T2>::getKeys()
+{	// newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+//struct hashnode<T1,T2> *newNode=new struct hashnode<T1,T2>;
 
-	struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 
 
 	BSTIterators<T1,T2> bst;
@@ -132,15 +304,15 @@ T1* Iterator<T1,T2>::m_getKeys()
 	for(int i=0;i<=MAX-1;++i)
 	{
 
-		temp=&nodeptr[i];
-		 if(temp->key!='\0')
+		temp=&(hashmap<T1,T2>::nodeptr[i]);
+		 if(temp->m_key!='\0')
 		 bst.inorder((bstNodeIt<T1,T2>*)temp);
 
 	}
 	current=temp;
 	for(int i=0;i<MAX;i++)
 	{arr[i]=bst.KeyArray[i];}
-	free(temp);
+	//free(temp);
 
 		return arr;
 
@@ -150,32 +322,33 @@ T1* Iterator<T1,T2>::m_getKeys()
 template<class T1,class T2>
 T1 Iterator<T1,T2>::operator++()
 {	BSTIterators<T1,T2> obj;
-//newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
-//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
+//newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+//struct hashnode<T1,T2> *newNode=new struct hashnode<T1,T2>;
 
-struct hashnodeIt<T1,T2> *temp=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 
 int i =0;
 
-	T1 Key=current->key;
-	int index=m_calculatehash(Key);
+	T1 m_key=current->m_key;
+	Iterator<T1,T2> it_obj;
+	int index=it_obj.calculatehash(m_key);
 	if(arr[i]!='\0'){
-		while(Key!=arr[i]){i++;}
+		while(m_key!=arr[i]){i++;}
 		 returnKey=arr[i+1];}
-	else if(nodeptr[index].right!=NULL)
+	else if(hashmap<T1,T2>::nodeptr[index].right!=NULL)
 	{
-		returnKey=(nodeptr[index].right)->key;
+		returnKey=hashmap<T1,T2>::nodeptr[index].right->m_key;
 	}
 	else {
 		index=index+1;
-		while(nodeptr[index].key=='\0'){index++;}
-		temp=&nodeptr[index];
-				 if(temp->key!='\0')
+		while(hashmap<T1,T2>::nodeptr[index].m_key=='\0'){index++;}
+		temp=&(hashmap<T1,T2>::nodeptr[index]);
+				 if(temp->m_key!='\0')
 				 obj.inorder((bstNodeIt<T1,T2>*)temp);
 				returnKey= obj.KeyArray[0];
 	}
-
-	free(temp);
+	current=temp;
+//	free(temp);
 	return returnKey;
 
 }
@@ -185,7 +358,7 @@ bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node)
 {
 
 
-	if(current->key==node.newNode->key && current->value==node.newNode->value)
+	if(current->m_key==node.m_key && current->m_value==node.m_value)
 	{return true;}
 
 	return false;
@@ -197,68 +370,19 @@ bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node)
 template<class T1,class T2>
 T2 Iterator<T1,T2>::operator[](int index)
 {
-	//newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
+	//newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 
-	current=&nodeptr[index];
-  return nodeptr[index].value;
+	current=&(hashmap<T1,T2>::nodeptr[index]);
+  return hashmap<T1,T2>::nodeptr[index].m_value;
 }
 
 
 
-
-//---------------------------------------------------------------------------------
-
-
-template<class T1,class T2>
-int Iterator<T1,T2>::m_calculatehash(T1 key)
-{
-	const uint32_t stringVal[]={(uint32_t)key};
-	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
-	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
-	int index=(ABC/100000000)/2;
-	return index%MAX;
-
-}
-template<class T1,class T2>
-bool Iterator<T1,T2>::m_Insert(T1 key,T2 value)
-{
-	int index=m_calculatehash(key);
-	//cout<<index<<endl;
-	//struct hashnodeIt<T1,T2> *newNode=new struct hashnodeIt<T1,T2>;
-	newNode->key=key;
-	newNode->value=value;
-	if(nodeptr[index].key=='\0')
-	{
-		nodeptr[index].key=newNode->key;
-		nodeptr[index].value=newNode->value;
-		nodeptr[index].left = NULL;
-		nodeptr[index].right = NULL;
-		//count[index]++;
-		//cout<<nodeptr[index].key<<endl;
-		return true;
-	}
-	else
-	{
-		hashnodeIt<T1,T2> *root;
-		root=&nodeptr[index];
-		BST<T1,T2> b_obj;
-		//b_obj.m_bstinsert()
-		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
-	}
-	cout<<nodeptr->key<<endl;
-	cout<<nodeptr->value<<endl;
-current=nodeptr;
-	return 0;
-}
-
-//----------------------------------------------------------------------------------
 
 template<class T1,class T2>
 Iterator<T1,T2>::~Iterator() {
-	free(newNode);
+	//free(newNode);
 }
-
-
 
 
 

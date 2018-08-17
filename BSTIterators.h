@@ -9,7 +9,7 @@
 #define BSTITERATORS_H_
 
 #include<iostream>
-#define MAX 5000
+#define BSTARRAYMAX 21
 using namespace std;
 template<class T1,class T2>
 struct bstNodeIt
@@ -23,7 +23,7 @@ class BSTIterators {
 public:
 	//T1 TotalKeys[];
 	int i;
-	T1 KeyArray[MAX];
+	T1 KeyArray[BSTARRAYMAX];
 	struct bstNodeIt<T1,T2> tempTree;
 	BSTIterators();
 	T1* inorder(bstNodeIt<T1,T2> *root);

@@ -1,65 +1,101 @@
 
 #ifndef ITERATORBST_H_
 #define ITERATORBST_H_
-#define MAX 50
+#define ARRAYMAX 21
+#define MAX 21
+
 #include <stdint.h>
 #include<stdlib.h>
-#include <vector>
-#include<list>
-#include <iterator>
-//int returnKey;
-/*
-#include"hashmap.cpp"
-#include"hashheader.h"
-*/
 
-using namespace std;
+
 
 template<class T1,class T2>
+struct hashnode
+{
+	T1 m_key;
+	T2 m_value;
+	hashnode<T1,T2> *left,*right;
+};
 
-struct hashnodeIt
-		{
-			T1 key;
-			T2 value;
-			hashnodeIt<T1,T2> *left,*right;
-		};
 
 
-template <class T1,class T2>
 
-class Iterator {
+//---------------------------------------------------------------------------Class HASHMAP---------------------------------------------------------
+template<class T1,class T2>
+class hashmap:public hashnode<T1,T2>
+{
+public:
+	T2 m_search(T1 key);
+	struct hashnode<T1,T2> nodeptr[MAX];
 
 
 public:
-	//T1 returnKey;
-	struct hashnodeIt<T1,T2> nodeptr[MAX];
-	 struct hashnodeIt<T1,T2> *current;
+	hashmap<T1,T2>();
+	hashmap<T1,T2>(int a);
 
+	//------------------------------------------------->
+	virtual ~hashmap<T1,T2>(){};
+	//------------------------------------------------->
+	int calculatehash(T1);
+	//------------------------------------------------->
+	bool findandInsert(T1,T2);
+	//------------------------------------------------->
+	bool insert(T1 key,T2 value);
+	//------------------------------------------------->
+	bool remove(T1);
+	//------------------------------------------------->
+	uint32_t size();
+	//------------------------------------------------->
+	uint32_t getNumberOfCollisionPerSlot(uint32_t);
+	//------------------------------------------------->
+	uint32_t getTotalNumberOfCollision();
+	//------------------------------------------------->
+	void printCollisionStatistics();
+	// T1* m_getKeys();//for iterator
+	void print_all();
+	T1 arr[MAX];
+
+	struct hashnode<T1,T2> *current;
+	//****************************************************************************************
+	//hashnode<T1,T2>* getHashNode(){return nodeptr;}
+};
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
+template <class T1,class T2>
+
+class Iterator:public hashmap<T1,T2> {
+
+
+public:
+	 struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+	 struct hashnode<T1,T2> *current;
+	 //uint32_t a=size();
+	 //nodeptr;
 	 Iterator();
-	 Iterator(hashnodeIt<T1,T2>* Node);
-	 hashnodeIt<T1,T2>* begin();
-	 hashnodeIt<T1,T2>* end();
-	 int size();
-	 T1* m_getKeys();
-	T2& m_get(T1 key);
+	 Iterator(hashnode<T1,T2>* Node);
+	 hashnode<T1,T2>* begin();
+	 hashnode<T1,T2>* end();
+	 T1* getKeys();
+	T2& get(T1 key);
 	T1 operator++() ;
 	bool operator!=( Iterator<T1,T2>) ;
 
-	 hashnodeIt<T1,T2>* operator*(Iterator<T1,T2> node) ;
+	 hashnode<T1,T2>* operator*() ;
+
 	T2 operator[](int index) ;
 	//----------------------------------------------------------------------------------------
-	    int m_calculatehash(T1 key);
-		bool m_findandInsert(T1,T2);
 
-		bool m_Insert(T1,T2);
 
 	//--------------------------------------------------------------------------------------------
 	virtual ~Iterator();
 public:
-	  T1 arr[MAX];
-	  T1 returnKey;
-	  struct hashnodeIt<T1,T2> *newNode=(struct hashnodeIt<T1,T2>*)malloc(sizeof(struct hashnodeIt<T1,T2>));
 
+	  T1 arr[ARRAYMAX];
+	  T1 returnKey;
+	//  hashmap<T1,T2> t1;
+	// hashmap<T1,T2> it;
+	//getHashNode();
 	 };
+
 
 #endif /* ITERATORBST_H_ */

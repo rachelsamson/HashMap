@@ -1,9 +1,3 @@
-/*
- * jenkins.cpp
- *
- *  Created on: Jul 30, 2018
- *      Author: raviiv
- */
 #include <iostream>
 #include <stdio.h>
 #include<iostream>
@@ -65,3 +59,5 @@ using namespace std;
 
                   return c;
                 }
+
+

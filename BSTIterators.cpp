@@ -10,7 +10,7 @@
 
 template<class T1,class T2>
 BSTIterators<T1,T2>::BSTIterators() {
-	for(i=0;i<MAX;i++)
+	for(i=0;i<BSTARRAYMAX;i++)
 	KeyArray[i]=0;
 	i=0;
 }
@@ -32,6 +32,8 @@ T1* BSTIterators<T1,T2>::inorder(struct bstNodeIt<T1,T2> *root)
 		tempTree.right=root->right;
         inorder(root->left);
         KeyArray[i++]=root->key;
+       // if(i>21700)
+       // cout<<i<<" index"<<"   root->key --"<<root->key<<"root->value---------" <<root->value<<endl;
         inorder(root->right);
           return KeyArray;
 
@@ -47,7 +49,7 @@ T2 BSTIterators<T1,T2>::search(struct bstNodeIt<T1,T2> * root, int key)
 {
 	//struct bstnode<T1,T2>* root=rootnode;
     // Base Cases: root is null or key is present at root
-    if ( root!=NULL||root->key== key)
+    if ( root==NULL||root->key== key)
        return root->value;
 
     // Key is greater than root's key
