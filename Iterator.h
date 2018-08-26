@@ -3,7 +3,8 @@
 #define ITERATORBST_H_
 #define ARRAYMAX 21
 #define MAX 21
-
+#include <mutex>
+#include<thread>
 #include <stdint.h>
 #include<stdlib.h>
 
@@ -26,11 +27,11 @@ class hashmap:public hashnode<T1,T2>
 {
 public:
 	T2 m_search(T1 key);
-	struct hashnode<T1,T2> nodeptr[MAX];
-
+	uint32_t sum;
+	struct hashnode<T1,T2> *nodeptr[MAX];//pointer
 
 public:
-	hashmap<T1,T2>();
+		hashmap<T1,T2>();
 	hashmap<T1,T2>(int a);
 
 	//------------------------------------------------->
@@ -67,6 +68,8 @@ class Iterator:public hashmap<T1,T2> {
 
 
 public:
+
+
 	 struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 	 struct hashnode<T1,T2> *current;
 	 //uint32_t a=size();
