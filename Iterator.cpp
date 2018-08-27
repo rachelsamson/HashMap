@@ -4,27 +4,30 @@
 #include<stdint.h>
 #include "bst.cpp"
 #include "jenkins.cpp"
-
-
+#include "BSTIterators.h"
 #include"BSTIterators.cpp"
-
-#define FLAG 1
-static std::mutex mutx;
-
-static int count[MAX];//NO OF ENTRIES INTO HASHMAP
-static int count1[MAX];//UNIQUE ENTRIES IN HASHMAP
-static int count2[MAX];//COLLISION RELATED STATS
-
+#define FLAG 0
+static uint32_t count[MAX];//NO OF ENTRIES INTO HASHMAP
+static uint32_t count1[MAX];//UNIQUE ENTRIES IN HASHMAP
+static uint32_t count2[MAX];//COLLISION RELATED STATS
 using namespace std;
 
-//---------------------------------------------------------------------------------
-
-
+//----------------------------------------------------------------------------------//
+//---------------------------HASH OPERAIONS-----------------------------------------//
+//----------------------------------------------------------------------------------//
 //CONSTRUCTOR INITIALIZING THE DATA STRUCTURE
 template<class T1,class T2>
 hashmap<T1,T2>::hashmap()
-{}
+{
+	//if(FLAG==0) cout<<"Constructor Initializing data structure to NULL\n"<<endl;
+	for(int i=0;i<MAX;i++)
+	{
+		nodeptr[i]=NULL;
+		arr[i]=0;//for iterator
+		current=nodeptr[i];
 
+	}
+}
 
 //CALCULATES HASH BASED ON JENKINS HASH
 template<class T1,class T2>
@@ -32,81 +35,65 @@ int hashmap<T1,T2>::calculatehash(T1 m_key)
 {
 	const uint32_t stringVal[]={uint32_t(m_key)};
 	int lenght=( sizeof(stringVal)/sizeof(uint32_t));
-
 	uint32_t ABC=JenkinsHash(stringVal,lenght, 33);
 	return (ABC%MAX);
-
 }
-//--------------------------------------------------------------->
-//INSERTION ON HASHMAP
+
+//---------------------------------------------INSERTION ON HASHMAP--------------------------------------------------------------//
 template<class T1,class T2>
 bool hashmap<T1,T2>::insert(T1 m_key,T2 m_value)
-
 {
-	std::thread::id this_id = std::this_thread::get_id();
-	 cout<<"Insert Function .Thread id"<<this_id<<endl;
-
-
-		mutx.lock();
-
 
 	int m_index=calculatehash(m_key);
-
-
-	//if(FLAG==0){ cout<<"Key:  "<<m_key;cout<<"\tValue:  "<<m_value;cout<<"\tIndex:"<<m_index;cout<<"\n";}
-
-	struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+	struct hashnode<T1,T2> *newNode=new  struct hashnode<T1,T2>;
 	newNode->m_key=m_key;
 	newNode->m_value=m_value;
-	if(nodeptr[m_index]->m_key==NULL)
+	if(nodeptr[m_index]==NULL || nodeptr[m_index]->m_key==NULL)
 	{
-		//nodeptr[m_index].m_key=6;
+		nodeptr[m_index]=new hashnode<T1,T2>;
+		nodeptr[m_index]->m_key=0;
+		cout<<"\nInserting key and value into root node[nodeptr]";
+		if(FLAG==0)
+		{ cout<<"Key:  "<<m_key;
+		printf("Value:%c \t %d ",m_value.a,m_value.number);
+		cout<<"\tIndex:"<<m_index;cout<<"\n";
+		}
 		nodeptr[m_index]->m_key=newNode->m_key;
 		nodeptr[m_index]->m_value=newNode->m_value;
 		nodeptr[m_index]->left = NULL;
 		nodeptr[m_index]->right = NULL;
+		cout<<"Inserted";
 		count1[m_index]++;
-		mutx.unlock();
-		return true;
+		//return true;
 	}
 	else
 	{
 		hashnode<T1,T2> *root;
-
 		root=nodeptr[m_index];
-
-
 		BST<T1,T2> b_obj;
+		cout<<"\nInserting into BST[nodeptr]";
 		b_obj.m_bstinsert((bstnode<T1,T2>*)root,(bstnode<T1,T2>*)newNode);
 		count2[m_index]++;
-		mutx.unlock();
 	}
-
-	mutx.lock();
-	count[m_index]=count1[m_index]+count2[m_index];
-	mutx.unlock();
+	count[m_index]+=count1[m_index]+count2[m_index];
 	return 0;
 }
-//--------------------------------------------------------------->
-//DELETES AN ENTRY ON HASHMAP
+
+//----------------------------------------DELETES AN ENTRY ON HASHMAP------------------------------------------------------//
 template<class T1,class T2>
 bool hashmap<T1,T2>::remove(T1 m_key)
 {
-
-	mutx.lock();
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"Remove Function .Thread id"<<this_id<<endl;
-
 	int m_index=calculatehash(m_key);
-	//if(FLAG==0)cout<<m_index;
-
-
+	if(FLAG==0)cout<<"\nDeleting key "<<m_key;
 	hashnode<T1,T2> *root=nodeptr[m_index];
-
-
-	BST<T1,T2> bst_obj;
-	if(1)
+	if(root==NULL)
 	{
+		cout<<"Key not found";
+		return true;
+	}
+	else
+	{
+		BST<T1,T2> bst_obj;
 		struct hashnode<T1,T2> *temp;
 		root=(struct hashnode<T1,T2>*)(bst_obj.m_deleteNode((bstnode<T1,T2>*)root,m_key));
 		temp=root;
@@ -114,124 +101,126 @@ bool hashmap<T1,T2>::remove(T1 m_key)
 		nodeptr[m_index]->m_value=temp->m_value;
 		nodeptr[m_index]->left=temp->left;
 		nodeptr[m_index]->right=temp->right;
-		mutx.unlock();
+		if(FLAG==0)cout<<"\tDeleted desired key";
+		if(count2[m_index]!=0)
+		{
+			count2[m_index]--;
+			--count[m_index];
+		}
 		return true;
+
 	}
 
+	/*if(1)
+	{
 
-	else{
-		mutx.unlock();
-		return false;}
+	}
+	else{return false;}*/
 }
-//--------------------------------------------------------------->
-// SEARCHES FOR A m_key AND RETURNS A m_value
-// IF NOT INSERTS INTO THE HASHMAP
+
+
+//----------------------SEARCHES FOR A KET AND RETURNS A VALUE IF NOT INSERTS INTO THE HASHMAP---------------------------//
 template<class T1,class T2>
 bool hashmap<T1,T2>::findandInsert(T1 m_key,T2 m_value)
 {
-	mutx.lock();
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"Find and Insert Function .Thread id"<<this_id<<endl;
-
 	int m_index=calculatehash(m_key);
-	struct hashnode<T1,T2> *root=&nodeptr[m_index];
-	BST<T1,T2> bst_obj;
-	T2 i=bst_obj.m_bstsearch((struct bstnode<T1,T2>*)root,m_key,m_value);
-	if(i==0)
+	cout<<"\nRunning Find and Insert function";
+	struct hashnode<T1,T2> *root=nodeptr[m_index];
+	if(root==NULL)
 	{
 		insert(m_key,m_value);
+		if(FLAG==0) cout<<"\nKey Inserted";
 
 	}
-	mutx.unlock();
+	else
+	{
+		BST<T1,T2> bst_obj;
+		bst_obj.m_bstsearch((struct bstnode<T1,T2>*)root,m_key,m_value);
+		if(FLAG==0){cout<<"\nELement found";}
+	}
 	return true;
 }
 
+
+//------------------------------------TOTAL ENTRIES INTO THE HASHMAP--------------------------------------------------//
+
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::size()
-
 {
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"Size Function .Thread id"<<this_id<<endl;
-
-	mutx.lock();
-	size=0;
-
+	sum=0;
 	for(int i=0;i<MAX;i++)
 	{
-		sum+=uint32_t(count[i]);
+
+		sum+=count[i];
 	}
-	cout<<"Total entries on hashmap";
-	mutx.unlock();
 	return sum;
 }
-//--------------------------------------------------------------->
-//RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED AT GIVEN SLOT NUMBER
+
+//-------------------------RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED AT GIVEN SLOT NUMBER------------------------------//
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::getNumberOfCollisionPerSlot(uint32_t slotNumber)
 {
-	return --count2[slotNumber];
+	if(count2[slotNumber]!=0)
+		return --count2[slotNumber];
+	else;
 }
-//--------------------------------------------------------------->
-//RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED IN THE HASHMAP
+
+//-------------------------RETURNS TOTAL NUMBER OF COLLISIONS HAPPENED IN THE HASHMAP-----------------------------------//
 template<class T1,class T2>
 uint32_t hashmap<T1,T2>::getTotalNumberOfCollision()
 {
-
-	mutx.lock();
 	sum=0;
 	for(int i=0;i<MAX;i++)
 	{
 		sum+=count2[i];
 	}
-	mutx.unlock();
 	return sum;
 }
-//--------------------------------------------------------------->
-//PRINTS NUMBER OF COLLISIONS HAPPENED AT EVERY SLOT NUMBER
+
+//-------------------------PRINTS NUMBER OF COLLISIONS HAPPENED AT EVERY SLOT NUMBER----------------------------------//
 template<class T1,class T2>
 void hashmap<T1,T2>::printCollisionStatistics()
 {
-	mutx.lock();
 	int i;
-	mutx.unlock();
 	for(i=0;i<MAX;i++)
 	{
-		cout<<"\nnumber of collision at index\t"<<i<<"\tare\t"<<count2[i];
+		cout<<"\nNumber of collision at index\t "<<i<<"\t is/are \t "<<count2[i];
 	}
 }
 
-//----------------------------------------------------------------------------------
-//ITERATOR FUNCTIONS
 
 
+
+
+//----------------------------------------------------------------------------------//
+//-----------------------------ITERATOR OPERATIONS----------------------------------//
+//----------------------------------------------------------------------------------//
 
 template<class T1,class T2>
 Iterator<T1,T2>::Iterator()
 {
-	mutx.lock();
-	int i=0;
-	arr[i]=0;
-
-   	hashmap<T1,T2>::nodeptr[i]=NULL;
-	/*	hashmap<T1,T2>::nodeptr[i]->m_value=0;
-		hashmap<T1,T2>::nodeptr[i]->right=NULL;
-		hashmap<T1,T2>::nodeptr[i]->left=NULL;
-*/
-     current=this->nodeptr[i];
-     mutx.unlock();
+	//cout<<"Constuctor initilializing the iterator";
+	int i=0;//Initialization
+	arr[i]=0;//Array that stores all the keys
 }
 
 
 template<class T1,class T2>
-hashnode<T1,T2>* Iterator<T1,T2>::begin()
+Iterator<T1,T2>::Iterator(hashnode<T1,T2>* currentNode)
 {
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"Begin Function .Thread id"<<this_id<<endl;
-
-
-	mutx.lock();
+	//if(FLAG==0)cout<<"Overloading constructor";
+	newNode=NULL;//Temporary to hold values
+	current=currentNode;
 	int index=0;
-	mutx.unlock();
+}
+
+//----------------------------------RETURNS FIRST ENTRY INTO THE HASHMAP-----------------------------------------------------//
+template<class T1,class T2>
+hashnode<T1,T2>* Iterator<T1,T2>::begin()
+{	int index=0;
+	if(FLAG==0){
+	cout<<"\nIterator:Begin Running";
+	cout<<"\tReturns first entry into the hashmap";}
 	while(hashmap<T1,T2>::nodeptr[index]->m_key==NULL){index++;}
 	newNode->m_key=hashmap<T1,T2>::nodeptr[index]->m_key;
 	newNode->m_value=hashmap<T1,T2>::nodeptr[index]->m_value;
@@ -241,177 +230,139 @@ hashnode<T1,T2>* Iterator<T1,T2>::begin()
 	{
 		newNode=newNode->left;
 	}
-
-	mutx.lock();
-
 	current=newNode;
-	mutx.unlock();
-
 	return newNode;
 }
 
+//---------------------------------RETURNS LAST ENTRY INTO THE HASHMAP-------------------------------------------------------//
 template<class T1,class T2>
 hashnode<T1,T2>* Iterator<T1,T2>::end()
 {
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"End Function .Thread id"<<this_id<<endl;
-
-
-	mutx.lock();
-	int i;
-	mutx.unlock();
-	for( i=MAX-1;i>=0;i--)
+	if(FLAG==0){
+	cout<<"\nIterator:End Running";
+	cout<<"\tReturns last entry into the hashmap";}
+	for(int i=MAX-1;i>=0;i--)
 	{
-	 if(hashmap<T1,T2>::nodeptr[i].m_key != NULL)
-	 {
-  	   newNode->m_key=hashmap<T1,T2>::nodeptr[i].m_key;
-       newNode->m_value=hashmap<T1,T2>::nodeptr[i].m_value;
-       newNode->right=hashmap<T1,T2>::nodeptr[i].right;
-       newNode->left=hashmap<T1,T2>::nodeptr[i].left;
-		while(newNode->right!=NULL)
-		 {newNode=newNode->right;}
-	 }
-    }
-	mutx.lock();
-
+		if(hashmap<T1,T2>::nodeptr[i]->m_key != NULL)
+		{
+			newNode->m_key=hashmap<T1,T2>::nodeptr[i]->m_key;
+			newNode->m_value=hashmap<T1,T2>::nodeptr[i]->m_value;
+			newNode->right=hashmap<T1,T2>::nodeptr[i]->right;
+			newNode->left=hashmap<T1,T2>::nodeptr[i]->left;
+			while(newNode->right!=NULL)
+			{newNode=newNode->right;}
+		}
+		break;
+	}
 	current=newNode;
-	mutx.unlock();
-
 	return newNode;
 }
 
-
+//----------------------------------------------RETURNS CURRENT NODE INFO---------------------------------------------//
 template<class T1,class T2>
 hashnode<T1,T2>* Iterator<T1,T2>::operator*()
 {
- return current;
+
+	return current;
 }
 
-
-
+//--------------------------------------------RETURNS VALUE BASED ON KEY----------------------------------------------//
 template<class T1,class T2>
 T2& Iterator<T1,T2>::get(T1 m_key)
 {
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"Get Function .Thread id"<<this_id<<endl;
-
-
 	Iterator<T1,T2> it_obj;
-    mutx.lock();
 	int index=it_obj.calculatehash(m_key);
 	struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
-	temp=(hashmap<T1,T2>::nodeptr[index]);
+	temp=&(hashmap<T1,T2>::nodeptr[index]);
+	if(FLAG==0)	cout<<"\nIterator:Get Running";
 	BSTIterators<T1,T2> bst;
+	struct hashnode<T1,T2> temp2;
 	returnKey=bst.search((bstNodeIt<T1,T2>*)temp,m_key);
 	current=temp;
-	 mutx.unlock();
 	return returnKey;
 }
 
+//---------------------------------------RETURNS ALL THE KEYS IN THE HASHMAP-----------------------------------------//
 template<class T1,class T2>
 T1* Iterator<T1,T2>::getKeys()
 {
-	std::thread::id this_id = std::this_thread::get_id();
-		 cout<<"GetKeys Function .Thread id"<<this_id<<endl;
-
-
 	struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
-
-
-	BSTIterators<T1,T2> bst;
-	mutx.lock();
-	for(int i=0;i<=MAX-1;++i)
+	BST<T1,T2> bst;
+	if(FLAG==0){
+	cout<<"\nIterator:Getkeys Running";
+	cout<<"\nReturns all the keys in the hashmap";}
+	for(int i=0;i<=MAX;i++)
 	{
 		temp=(hashmap<T1,T2>::nodeptr[i]);
-		mutx.unlock();//2 thread change tempn values
-		if(temp->m_key!='\0')
-		 bst.inorder((bstNodeIt<T1,T2>*)temp);
-
+		if(temp->m_key!=NULL)
+			bst.inorder((bstnode<T1,T2>*)temp);
 	}
-	mutx.lock();
 	current=temp;
-	  for(int i=0;i<MAX;i++)
-	{
-	arr[i]=bst.KeyArray[i];}
-	 mutx.unlock();
-
-		return arr;
-
+	for(int i=0;i<MAX;i++)
+	{arr[i]=bst.KeyArray[i];}
+	return arr;
 }
 
-
+//------------------------------------INCREMENTS THE CURRENT AND RETURNS THE NEXT NODE------------------------------//
 template<class T1,class T2>
 T1 Iterator<T1,T2>::operator++()
 {
 	BSTIterators<T1,T2> obj;
-	 Iterator<T1,T2> it_obj;
-     struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
-     mutx.lock();
-	 int i =0;
-	 T1 m_key=current->m_key;
-	 int index=it_obj.calculatehash(m_key);
+	struct hashnode<T1,T2> *temp=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
+	int i =0;
+	T1 m_key=current->m_key;
+	Iterator<T1,T2> it_obj;
+	if(FLAG==0){
+	cout<<"\nIterator:Operator++ Running";
+	cout<<"\nIncrements the current node and returns the next node";}
+	int index=it_obj.calculatehash(m_key);
 	if(arr[i]!='\0'){
 		while(m_key!=arr[i]){i++;}
-		 returnKey=arr[i+1];}
+		returnKey=arr[i+1];}
 	else if(hashmap<T1,T2>::nodeptr[index]->right!=NULL)
 	{
 		returnKey=hashmap<T1,T2>::nodeptr[index]->right->m_key;
 	}
-	else {
+	else
+	{
 		index=index+1;
 		while(hashmap<T1,T2>::nodeptr[index]->m_key==NULL){index++;}
 		temp=(hashmap<T1,T2>::nodeptr[index]);
-		mutx.unlock();
-
-		if(temp->m_key!='\0')
-				 obj.inorder((bstNodeIt<T1,T2>*)temp);
-				 mutx.lock();
-
-				returnKey= obj.KeyArray[0];
-				mutx.unlock();
-
+		if(temp->m_key!=NULL)obj.inorder((bstNodeIt<T1,T2>*)temp);
+		returnKey= obj.KeyArray[0];
 	}
-    mutx.lock();
 	current=temp;
-	mutx.unlock();
 	return returnKey;
-
 }
 
+//-------------------------------------------Returns true if value and key matches----------------------------------//
 template<class T1,class T2>
 bool Iterator<T1,T2>::operator!=(Iterator<T1,T2> node)
 {
-
-
-	if(current->m_key==node.m_key && current->m_value==node.m_value)
+	if(FLAG==0){
+	cout<<"\nIterator:Operator!= running";
+	cout<<"\n Returns 0 if two objects' key and value matches";}
+	if(current->m_key==node.m_key && current->m_value.a==node.m_value.a && current->m_value.number==node.m_value.number)
 	{return true;}
-
 	return false;
-
 }
 
-
+//-------------------------------------------RETURNS INPUT SUBSCRIPT'S VALUE---------------------------------------//
 
 template<class T1,class T2>
 T2 Iterator<T1,T2>::operator[](int index)
 {
-	mutx.lock();
-    current=(hashmap<T1,T2>::nodeptr[index]);
-    mutx.unlock();
-    return hashmap<T1,T2>::nodeptr[index]->m_value;
+	if(FLAG==0){
+	cout<<"\nIterator:Operator[] running";
+	cout<<"\n Returns desired subscript's value";}
+	current=(hashmap<T1,T2>::nodeptr[index]);
+	if(hashmap<T1,T2>::nodeptr[index]!=NULL){
+	cout<<hashmap<T1,T2>::nodeptr[index]->m_value.a;}
+	//cout<<nodeptr[index]->m_value.number;
+	//return hashmap<T1,T2>::nodeptr[index]->m_value;
+	//return eg;
 }
-
-
-
 
 template<class T1,class T2>
 Iterator<T1,T2>::~Iterator() {
-	}
-
-
-
-
-
-
-
-
+}

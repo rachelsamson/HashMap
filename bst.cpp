@@ -1,6 +1,6 @@
 #include<iostream>
 #include<stdlib.h>
-#define BSTARRAYMAX 21
+#define BSTARRAYMAX 100
 
 //static int count;
 using namespace std;
@@ -28,7 +28,7 @@ public:
 	//template<class T1,class T2>
 	void m_bstinsert(bstnode<T1,T2> *tree, bstnode<T1,T2> *newnode)
 	{
-		if (tree->key > newnode->key)
+ 		if (tree->key > newnode->key)
 		{
 			if (tree->left != NULL)
 			{
@@ -98,7 +98,12 @@ public:
 			// node with no child
 			if(root->left==NULL && root->right==NULL)
 			{
-				root=NULL;
+				//root=NULL;
+				root->key=NULL;
+				root->value.a=NULL;
+				root->value.number=NULL;
+				root->left=NULL;
+				root->right=NULL;
 				//return root;
 			}
 			// node with only one child
@@ -132,24 +137,21 @@ public:
 		}
 		return root;
 	}
-	//template<class T1,class T2>
-	T2 m_bstsearch(struct bstnode<T1,T2> *root,T1 key,T2 value)
-	{
-		// Base Cases: root is null or key is present at root
-		if (root == NULL)
-			return 0;
-		else if(root->key==key)
-			return root->value;
+	bool bstsearch(struct bstnode<T1,T2> *root, T1 key)
 
-		// Key is greater than root's key
-		if (root->key < key)
-			return m_bstsearch(root->right, key,value);
+		{
+			//struct bstnode<T1,T2>* root=rootnode;
+		    // Base Cases: root is null or key is present at root
+		    if ( root!=NULL||root->key== key)
+		       return true;
 
-		// Key is smaller than root's key
-		return m_bstsearch(root->left, key,value);
+		    // Key is greater than root's key
+		    if (root->key < key)
+		       return bstsearch(root->right, key);
 
-
-	}
+		    // Key is smaller than root's key
+		    return bstsearch(root->left, key);
+		}
 
 	//template<class T1,class T2>
 	T1* inorder(struct bstnode<T1,T2> *root)
@@ -180,20 +182,20 @@ public:
 
 
 //	template<class T1,class T2>
-	T2 m_bstsearch(struct bstnode<T1,T2> * root, int key)
+	bool m_bstsearch(struct bstnode<T1,T2> * root, T1 key,T2 value)
 
 	{
 		//struct bstnode<T1,T2>* root=rootnode;
 	    // Base Cases: root is null or key is present at root
 	    if ( root!=NULL||root->key== key)
-	       return root->value;
+	       return true;
 
 	    // Key is greater than root's key
 	    if (root->key < key)
-	       return search(root->right, key);
+	       return m_bstsearch(root->right, key,value);
 
 	    // Key is smaller than root's key
-	    return search(root->left, key);
+	    return m_bstsearch(root->left, key,value);
 	}
 
 };

@@ -1,3 +1,4 @@
+/*
 //============================================================================
 // Name        : IteratorCheck.cpp
 // Author      : rachel
@@ -6,84 +7,65 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
-#include <thread>
 
+#include <iostream>
+#include<thread>
+using namespace std;
+
+void thread_function()
+{
+	for(int i = 0; i < 10000; i++);
+	std::cout<<"thread function Executing"<<std::endl;
+}
+
+int main()
+{
+
+	std::thread threadObj(thread_function);
+	for(int i = 0; i < 10000; i++);
+	std::cout<<"Display From MainThread"<<std::endl;
+	threadObj.join();
+	std::cout<<"Exit of Main function"<<std::endl;
+	return 0;
+}
+/*
 #include"Iterator.h"
 #include"Iterator.cpp"
-#define LAST 30
-
 using namespace std;
 
 int main() {
 
-	thread threads[LAST];
+	Iterator<int,int> obj1_;
+	Iterator<int,int> obj2;
+struct hashnodeIt<int,int>* temp;
 
-	Iterator<int, int> iter1;
-	Iterator<int, int> iter2;
+obj2.newNode->key=12;
+obj2.newNode->value=10;
+int counttemp=0;
+		for(int i=10;i>0;i-=2)
+		{
+			obj1_.m_Insert(i+1,i++);
+			counttemp++;
+			cout<<obj1_.nodeptr[i].value<<endl;
 
-	iter2.newNode->m_key = 12;
-	iter2.newNode->m_value = 10;
+		}
+		 temp=obj1_.begin();
 
-	int value = 12;
-	for (int i = 0; i <30; i++) {
-		int key = i;
-		if(i%5==1)
-		threads[i] = std::thread(&Iterator<int, int>::insert, &iter1, key,value);
+		obj1_!=obj2;
 
-		if(i%5==2)
-		threads[i] = std::thread(&Iterator<int, int>::get, &iter1,3);
+		obj1_[6];
 
-		if(i%5==3)
-		threads[i] = std::thread(&Iterator<int, int>::getKeys, &iter1);
+    	obj1_[6];
+    	++obj1_;
+    	//obj1.m_getKeys();
+    	obj1_.m_getKeys();
 
-		if(i%5==4)
-		threads[i] = std::thread(&Iterator<int, int>::remove, &iter1,key);
 
-		if(i%5==0)
-			cout<<"this";
-		//threads[i] = std::thread(&Iterator<int, int>::g, &iter1, key);
 
-	}
-
-	//thread1();
-	 	 for (int i = 0; i < LAST; i++) {
-	 		threads[i].join();
-	 	}
-
-	 iter1[6];
-	++iter1;
 
 
 
 	return 0;
 }
 
-/*
-
-
-
-
- #include<iostream>
-
- void thread_function()
- {
- std::cout<<"Inside Thread :: ID  = "<<std::this_thread::get_id()<<std::endl;
- }
- int main()
- {
- std::thread threadObj1(thread_function
- std::thread threadObj2(thread_function);
-
- if(threadObj1.get_id() != threadObj2.get_id())
- std::cout<<"Both Threads have different IDs"<<std::endl;
-
- std::cout<<"From Main Thread :: ID of Thread 1 = "<<threadObj1.get_id()<<std::endl;
- std::cout<<"From Main Thread :: ID of Thread 2 = "<<threadObj2.get_id()<<std::endl;
-
- threadObj1.join();
- threadObj2.join();
- return 0;
- }
-
-
- */
+*/

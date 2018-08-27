@@ -1,15 +1,10 @@
 
 #ifndef ITERATORBST_H_
 #define ITERATORBST_H_
-#define ARRAYMAX 21
-#define MAX 21
-#include <mutex>
-#include<thread>
+#define ARRAYMAX 100
+#define MAX 26
 #include <stdint.h>
 #include<stdlib.h>
-
-
-
 template<class T1,class T2>
 struct hashnode
 {
@@ -17,21 +12,17 @@ struct hashnode
 	T2 m_value;
 	hashnode<T1,T2> *left,*right;
 };
-
-
-
-
 //---------------------------------------------------------------------------Class HASHMAP---------------------------------------------------------
 template<class T1,class T2>
 class hashmap:public hashnode<T1,T2>
 {
 public:
 	T2 m_search(T1 key);
-	uint32_t sum;
-	struct hashnode<T1,T2> *nodeptr[MAX];//pointer
+	struct hashnode<T1,T2> *nodeptr[MAX];
+
 
 public:
-		hashmap<T1,T2>();
+	hashmap<T1,T2>();
 	hashmap<T1,T2>(int a);
 
 	//------------------------------------------------->
@@ -46,6 +37,7 @@ public:
 	bool remove(T1);
 	//------------------------------------------------->
 	uint32_t size();
+	uint32_t  sum;
 	//------------------------------------------------->
 	uint32_t getNumberOfCollisionPerSlot(uint32_t);
 	//------------------------------------------------->
@@ -57,8 +49,6 @@ public:
 	T1 arr[MAX];
 
 	struct hashnode<T1,T2> *current;
-	//****************************************************************************************
-	//hashnode<T1,T2>* getHashNode(){return nodeptr;}
 };
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -68,8 +58,6 @@ class Iterator:public hashmap<T1,T2> {
 
 
 public:
-
-
 	 struct hashnode<T1,T2> *newNode=(struct hashnode<T1,T2>*)malloc(sizeof(struct hashnode<T1,T2>));
 	 struct hashnode<T1,T2> *current;
 	 //uint32_t a=size();
