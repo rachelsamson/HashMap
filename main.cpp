@@ -11,6 +11,11 @@ int main() {
 	Iterator<int,structvalue> iter1;
 	Iterator<int,structvalue> iter2;
 	Iterator<int,structvalue> iter3;
+	Iterator<int,int> iter4;
+
+	iter2.newNode->m_key=5;
+	iter2.newNode->m_value.a='b';
+	iter2.newNode->m_value.number=4;
 
 	int count=0;
 
@@ -28,30 +33,36 @@ int main() {
 	ex.number=100;
 	iter1.findandInsert(5,ex);
 
-	cout<<"\nTotal entries into hashmap "<<iter1.size();
+	cout<<"\nTotal entries into hashmap\n "<<iter1.size();
 
-	cout<<"\nCollision at desired slot "<<iter1.getNumberOfCollisionPerSlot(3)<<endl;
+	iter1.getNumberOfCollisionPerSlot(3);
 
 	cout<<"\nTotal collisions "<<iter1.getTotalNumberOfCollision()<<endl;
 
 	int opoverload=iter1!=iter2;cout<<opoverload;
 	cout<<"Operator!= Result "<<opoverload;
-	iter1[6];//Returns value on the specified index
+	iter1.newNode->m_value=iter1[22];//Returns value on the specified index
 
-	++iter1;//Increments the pointer to where the current points
 
-	iter2=iter1.begin();//Returns first entry into hashmap
-	cout<<iter2.m_key;
-	printf("%s \t ",iter2.m_value.a);
+			iter1.newNode->m_key=++iter1;
+			cout<<iter1.newNode->m_key;
+			//Increments the pointer to where the current points
 
-	iter3=iter1.end();//Returns last entry into hashmap
-	cout<<iter3.m_key;
-	printf("%s \t ",iter2.m_value.a);
+	iter1.begin();//Returns first entry into hashmap
+
+
+	iter1.end();//Returns last entry into hashmap
+
+	iter1.get(4);
+	iter1.get(3);
+
 
 	iter1.getKeys();//Returns all the keys in the hashmap
-	cout<<"Listing all keys\n "<<endl;
+	//cout<<"\nListing all keys\n "<<endl;
+
 	for(int i=0;i<26;i++)
 	{
+
 		cout<<iter1.arr[i]<<endl;
 	}
 	return 0;
